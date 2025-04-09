@@ -1,0 +1,112 @@
+﻿@model NonnyE_Learning.Business.ViewModel.CourseLearningViewModel
+
+<section class="grey page-title">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-left">
+                <h1>@Model.Modules.FirstOrDefault()?.Course.Title Modules</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="white section">
+    <div class="container">
+        <!-- Progress Bar Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <p class="lead">
+                    @((Model.Modules.Count(m => m.ModuleProgress?.IsCompleted == true) * 100.0) / Model.Modules.Count())% Completed
+                </p>
+                <div class="progress" style="height: 25px;">
+                    <div class="progress-bar" role="progressbar"
+                         style="width: @((Model.Modules.Count(m => m.ModuleProgress?.IsCompleted == true) * 100.0) / Model.Modules.Count())%; background-color: @( ((Model.Modules.Count(m => m.ModuleProgress?.IsCompleted == true) * 100.0) / Model.Modules.Count()) == 100);"
+                         aria-valuenow="@((Model.Modules.Count(m => m.ModuleProgress?.IsCompleted == true) * 100.0) / Model.Modules.Count())"
+                         aria-valuemin="0" aria-valuemax="100">
+                        <span class="sr-only">@((Model.Modules.Count(m => m.ModuleProgress?.IsCompleted == true) * 100.0) / Model.Modules.Count())% Complete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modules Section -->
+        <div class="row">
+            @foreach (var module in Model.Modules)
+            {
+                <div class="col-md-6">
+                    <div class="card module-card">
+                        <div class="card-body">
+                            <h4 class="module-title">@module.Title</h4>
+                            <p class="module-content">@module.CourseContent</p>
+                            @if (module.ModuleProgress != null && module.ModuleProgress.IsCompleted)
+                            {
+                                <a class="btn btn-success btn-sm disabled">
+                                    Completed
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Learning"
+                                   asp-action="CompleteModule"
+                                   asp-route-moduleId="@module.ModuleId"
+                                   class="btn btn-danger btn-sm">
+                                    Mark as Complete
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.IsCourseCompleted)
+        {
+            <div class="row mt-4">
+                <div class="col-md-12 text-center">
+                    <a asp-controller="Certificate"
+                       asp-action="DownloadCertificate"
+                       asp-route-courseId="@Model.Modules.FirstOrDefault()?.CourseId"
+                       class="btn btn-primary btn-lg">
+                        Download Certificate
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<style>
+    .module-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .module-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .module-content {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* Customize the progress bar */
+    .progress {
+        margin-bottom: 20px;
+        background-color: #f3f3f3;
+    }
+
+    .progress-bar {
+        background-color: #f44336; /* Default red color */
+    }
+</style>

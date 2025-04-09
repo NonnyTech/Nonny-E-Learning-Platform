@@ -1,0 +1,41 @@
+﻿@model IEnumerable<NonnyE_Learning.Data.Models.Course>
+
+
+<section class="grey page-title">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-left">
+                <h1>My Courses</h1>
+            </div>
+            <div class="col-md-6 text-right">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="white section">
+    <div class="container">
+        @foreach (var item in Model)
+        {
+                <div class="row course-list">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="shop-item-list entry">
+                            <div class="">
+                                <img src="@item.ImageUrl" alt="">
+                                <div class="magnifier"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-md-8">
+                        <div class="shop-list-desc">
+                            <h4>@item.Title</h4>
+                            <a asp-action="StartLearning" asp-controller="Learning" asp-route-courseId="@item.CourseId" class="btn btn-primary btn-sm">
+                                Start Learning
+                            </a>
+                        </div>
+                    </div>
+                </div>
+        }
+        <hr class="invis">
+    </div>
+</section>

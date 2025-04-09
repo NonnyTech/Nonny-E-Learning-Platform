@@ -1,0 +1,61 @@
+﻿@model NonnyE_Learning.Business.ViewModel.ContactUsModel
+@{
+    ViewData["Title"] = "Contact";
+    Layout = "_Layout";
+}
+<section class="white section">
+    <div class="container">
+        <div class="row contact-wrapper">
+            <div class="col-md-9 col-sm-9 col-xs-12 content-widget">
+                <div class="widget-title">
+                    <h4>Contact Form</h4>
+                    <hr>
+                </div>
+                <div id="contact_form" class="contact_form row">
+                    <div id="message"></div>
+                    <form asp-action="Contact" asp-controller="Contact" method="POST" id="contactForm1" novalidate>
+                        @Html.AntiForgeryToken()
+                        <div class="form-row">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+                                <div class="form-group">
+                                    <input asp-for="Name" class="form-control" placeholder="Name *" required />
+                                    <span class="text-danger" asp-validation-for="Name"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="Email"  class="form-control" placeholder="Email *" type="email" required />
+                                    <span class="text-danger" asp-validation-for="Email"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="Phone" class="form-control" placeholder="Phone number *" type="tel" required />
+                                    <span class="text-danger" asp-validation-for="Phone"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 col-md-8 col-sm-8 col-12">
+                                <div class="form-group">
+                                    <textarea asp-for="Message" class="form-control" rows="6" placeholder="Message" required></textarea>
+                                    <span class="text-danger" asp-validation-for="Message"></span>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-12 content-widget">
+                <div class="widget-title">
+                    <h4>Contact Details</h4>
+                    <hr>
+                </div>
+                <div class="contact-list">
+                    <ul class="contact-details">
+                        <li><i class="fa fa-link"></i> <a href="#">www.nonnyelearningplus.com</a></li>
+                        <li><i class="fa fa-envelope"></i> <a href="mailto:info@yoursite.com">info@NonnyElearningplus.com</a></li>
+                        <li><i class="fa fa-phone"></i> +2348032466818</li>
+                        <li><i class="fa fa-fax"></i> +2348022358641</li>
+                        <li><i class="fa fa-home"></i> No 10 Amubioya Street Oke Aro Lagos.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

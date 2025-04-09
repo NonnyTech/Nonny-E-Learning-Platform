@@ -1,0 +1,49 @@
+﻿@model NonnyE_Learning.Business.ViewModel.CourseDetailsViewModel
+@{
+    ViewData["Title"] = "Courses";
+    Layout = "_Layout";
+}
+
+
+<section class="white section">
+    <div class="container">
+        <div class="row">
+            <!-- Left Sidebar: Course-Specific Image -->
+            <div id="course-left-sidebar" class="col-md-4">
+                <div class="course-image-widget">
+                    <img src="@Model.ImageUrl" alt="@Model.Title" class="img-responsive">
+                </div>
+                <div class="course-meta">
+                    <p class="course-category">Category: <strong>@Model.Category</strong></p>
+                    <hr>
+                    <p class="course-student">Instructor: <strong>@Model.Instructor</strong></p>
+                    <hr>
+                    <p class="course-time">Duration: <strong>@Model.Duration</strong></p>
+                    <hr>
+                    <p class="course-time">Lectures: <strong>@Model.Lectures</strong></p>
+                    <hr>
+                    <p class="course-time">Price: <strong>@Model.Price</strong></p>
+                    <hr>
+                    <a asp-controller="Payment"
+                       asp-action="InitiatePayment"
+                       asp-route-courseId="@Model.CourseId"
+                       asp-route-enrollmentId="@Model.EnrollmentId"
+                       asp-route-amount="@Model.Price"
+                       class="btn btn-primary">
+                        Pay Now
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- Right-Side: Constant Technology Image -->
+            <div id="course-content" class="col-md-8">
+                <div class="course-image">
+                    <img src="~/upload/xblog_03.jpg.pagespeed.ic.ZGQLz9XvWC.jpg" alt="Technology Course Image" class="img-responsive">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+

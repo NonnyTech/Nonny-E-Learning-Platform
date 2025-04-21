@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NonnyE_Learning.Business.Services.Interfaces;
 using System.Security.Claims;
@@ -20,10 +21,14 @@ namespace Nonny_E_Learning_Platform.Controllers
 			var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			var certificate = await _certificateService.GenerateCertificateAsync(studentId, courseId);
 
-			if (certificate == null)
-				return NotFound("Certificate not available. Ensure all course modules are completed.");
+			if (!certificate.Success || certificate.Data == null)
+			{
+				TempData["error"] = certificate.Message;
+				return RedirectToAction("MyCourses"); 
+			}
+			return File(certificate.Data.FileBytes, "application/pdf", certificate.Data.FileName);
 
-			return File(certificate.FileBytes, "application/pdf", certificate.FileName);
+
 		}
 	}
 }

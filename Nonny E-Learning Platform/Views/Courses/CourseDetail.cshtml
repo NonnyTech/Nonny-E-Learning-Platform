@@ -1,7 +1,10 @@
-﻿@model NonnyE_Learning.Business.ViewModel.CourseDetailsViewModel
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@model NonnyE_Learning.Business.ViewModel.CourseDetailsViewModel
 @{
     ViewData["Title"] = "Courses";
     Layout = "_Layout";
+    var returnUrl = Context.Request.GetEncodedPathAndQuery();
+
 }
 
 
@@ -24,15 +27,26 @@
                     <hr>
                     <p class="course-time">Price: <strong>@Model.Price</strong></p>
                     <hr>
-                    <a asp-controller="Payment"
-                       asp-action="InitiatePayment"
-                       asp-route-courseId="@Model.CourseId"
-                       asp-route-enrollmentId="@Model.EnrollmentId"
-                       asp-route-amount="@Model.Price"
-                       class="btn btn-primary">
-                        Pay Now
-                    </a>
-
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Account"
+                           asp-action="Login"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-primary login-required">
+                            Pay Now
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Payment"
+                           asp-action="InitiatePayment"
+                           asp-route-courseId="@Model.CourseId"
+                           asp-route-enrollmentId="@Model.EnrollmentId"
+                           asp-route-amount="@Model.Price"
+                           class="btn btn-success">
+                            Pay Now
+                        </a>
+                    }
                 </div>
             </div>
 

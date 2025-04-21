@@ -1,4 +1,5 @@
-﻿using NonnyE_Learning.Data.Models;
+﻿using NonnyE_Learning.Business.DTOs.Base;
+using NonnyE_Learning.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,12 @@ namespace NonnyE_Learning.Business.Services.Interfaces
 {
     public interface ICourseServices
     {
-           Task<IEnumerable<Course>> GetAllCoursesAsync();
-           Task  <Course> GetCourseById(int courseId);
-           Task<Course> AddCourseAsync(Course course);
-           Task<Course> UpdateCourseAsync(Course course);
-           Task<bool> DeleteCourseAsync(int courseId);
-		Task<DateTime?> GetCourseCompletionDate(string studentId, int courseId);
-
+		Task<BaseResponse<IEnumerable<Course>>> GetAllCoursesAsync();
+		Task<BaseResponse<Course>> GetCourseById(int courseId);
+		Task<BaseResponse<Course>> AddCourseAsync(Course course);
+		Task<BaseResponse<Course>> UpdateCourseAsync(Course course);
+		Task<BaseResponse<bool>> DeleteCourseAsync(int courseId);
+		Task<BaseResponse<DateTime?>> GetCourseCompletionDate(string studentId, int courseId);
 
 	}
 }

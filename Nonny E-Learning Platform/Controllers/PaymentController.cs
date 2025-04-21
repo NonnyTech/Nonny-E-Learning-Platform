@@ -13,7 +13,6 @@ using System.Security.Claims;
 
 namespace Nonny_E_Learning_Platform.Controllers
 {
-	[Authorize]
 	public class PaymentController : Controller
 	{
 		private readonly IFlutterwaveServices _flutterwaveServices;
@@ -34,30 +33,31 @@ namespace Nonny_E_Learning_Platform.Controllers
 			_userManager = userManager;
 			_emailServices = emailServices;
 		}
+		[HttpGet]
 		public async Task<IActionResult> InitiatePayment(int courseId, int enrollmentId, decimal amount)
 		{
-
-			if (!User.Identity.IsAuthenticated)
-			{
-				TempData["error"] = "You have to log in to pay for the course.";
-				return Challenge(new AuthenticationProperties
-				{
-					RedirectUri = Url.Action("CourseDetail", "Courses", new { courseId })
-				});
-			}
 
 			var studentId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 			if (studentId == null)
 			{
-				TempData["error"] = "User not logged in.";
-				return RedirectToAction("Login", "Account");
+				// Build current URL
+				var returnUrl = Url.Action("InitiatePayment", "Payment", new
+				{
+					courseId,
+					enrollmentId,
+					amount
+				});
+
+				TempData["error"] = "Please login to use this service.";
+				return RedirectToAction("Login", "Account", new { returnUrl });
 			}
 
-			var course = await _courseServices.GetCourseById(courseId);
-			if (course == null)
+			var courseResponse = await _courseServices.GetCourseById(courseId);
+			if (!courseResponse.Success || courseResponse.Data == null)
 			{
-				return NotFound();
+				TempData["error"] = courseResponse.Message;
+				return RedirectToAction("Index", "Home");
 			}
 
 			var transactionResponse = await _transactionServices.CreateTransaction(enrollmentId, studentId, amount);
@@ -65,7 +65,8 @@ namespace Nonny_E_Learning_Platform.Controllers
 			if (!transactionResponse.Success)
 			{
 				TempData["error"] = "Failed to initiate payment.";
-				return RedirectToAction("Payment", new { enrollmentId });
+				return RedirectToAction("Index", "Home");
+
 			}
 			return Redirect(transactionResponse.Data); // Redirect to Flutterwave Payment Link
 
@@ -116,22 +117,5 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 		}
 
-		public async Task<IActionResult> Enroll(int transaction_id)
-		{
-			var transaction = await _context.Transactions.FindAsync(transaction_id);
-			if (transaction == null) return NotFound();
-
-			var enrollment = new Enrollment
-			{
-				StudentEmail = transaction.StudentEmail,
-				CourseId = 1, // Update dynamically
-				EnrollmentDate = DateTime.UtcNow
-			};
-
-			_context.Enrollements.Add(enrollment);
-			await _context.SaveChangesAsync();
-
-			return View("EnrollmentSuccess");
-		}
 	}
 }

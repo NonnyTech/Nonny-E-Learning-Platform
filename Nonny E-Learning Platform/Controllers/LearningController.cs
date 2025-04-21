@@ -25,26 +25,38 @@ namespace Nonny_E_Learning_Platform.Controllers
 		public async Task<IActionResult> StartLearning(int courseId)
 		{
 			var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+			// Create or get the enrollment for the student
 			var enrollment = await _enrollmentServices.CreateOrGetEnrollmentAsync(courseId, studentId);
 
 			if (enrollment == null)
 				return RedirectToAction("Index", "Home");
 
+			// Get the course and check if it's successful
+			var courseResponse = await _courseServices.GetCourseById(courseId);
+			if (!courseResponse.Success)
+			{
+				// If the course was not found or any error occurred
+				return RedirectToAction("Index", "Home");
+			}
+			var course = courseResponse.Data;
+
+			// Get all modules for the course
 			var modules = await _moduleServices.GetModulesByCourseIdAsync(courseId);
 
 			if (modules.Any())
 			{
 				foreach (var module in modules)
 				{
-					module.Course = await _courseServices.GetCourseById(module.CourseId);
+					module.Course = course; // Set the course for each module
 					module.ModuleProgress = await _moduleServices.GetModuleProgressAsync(module.ModuleId, studentId);
-
 				}
 			}
 
 			// Check if the student has completed all modules
 			bool isCourseCompleted = await _moduleServices.HasUserCompletedAllModules(courseId, studentId);
 
+			// Prepare the view model
 			var viewModel = new CourseLearningViewModel
 			{
 				Modules = modules,
@@ -52,9 +64,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 			};
 
 			return View(viewModel);
-
 		}
-
 		public async Task<IActionResult> CompleteModule(int moduleId)
 		{
 			var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);

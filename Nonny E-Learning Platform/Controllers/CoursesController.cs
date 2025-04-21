@@ -25,9 +25,17 @@ namespace Nonny_E_Learning_Platform.Controllers
 
         public async Task<IActionResult> CourseList()
         {
-            var course = await _courseServices.GetAllCoursesAsync();
-            return View(course);
-        }
+			var response = await _courseServices.GetAllCoursesAsync();
+
+			if (!response.Success)
+			{
+				
+				TempData["ErrorMessage"] = response.Message; 
+				return View("Error");  
+			}
+
+			return View(response.Data);
+		}
         public IActionResult Quiz()
         {
             return View();
@@ -37,12 +45,14 @@ namespace Nonny_E_Learning_Platform.Controllers
 		{
 			var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-			var course = await _courseServices.GetCourseById(courseId);
+			var response = await _courseServices.GetCourseById(courseId);
 
-			if (course == null)
+			if (!response.Success)
 			{
-				return NotFound("Course not found. Please check if the course exists in the database.");
+				return NotFound(response.Message);
 			}
+
+			var course = response.Data;
 			var enrollmentId = await _enrollmentServices.CreateOrGetEnrollmentAsync(courseId, studentId);
 
 			if (enrollmentId == null)

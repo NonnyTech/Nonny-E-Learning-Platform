@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business.DTOs;
+using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Data.DbContext;
 using NonnyE_Learning.Data.Models;
@@ -27,17 +28,43 @@ namespace NonnyE_Learning.Business.Services
 			_moduleServices = moduleServices;
 			_courseServices = courseServices;
 		}
-		public async Task<CertificateFile> GenerateCertificateAsync(string studentId, int courseId)
+		public async Task<BaseResponse<CertificateFile>> GenerateCertificateAsync(string studentId, int courseId)
 		{
 			var student = await _moduleServices.GetStudentById(studentId);
-			var course = await _courseServices.GetCourseById(courseId);
+			if (student == null)
+			{
+				return new BaseResponse<CertificateFile>
+				{
+					Success = false,
+					Message = "Student not found"
+				};
+			}
+			var courseResponse = await _courseServices.GetCourseById(courseId);
+			if (!courseResponse.Success || courseResponse.Data == null)
+			{
+				return new BaseResponse<CertificateFile>
+				{
+					Success = false,
+					Message = "Course not found"
+				};
+			}
+			var course = courseResponse.Data;
 
 			// Ensure the student has completed all modules before generating the certificate
 			if (!await _moduleServices.HasUserCompletedAllModules(courseId, studentId))
-				return null;
+			{
+				return new BaseResponse<CertificateFile>
+				{
+					Success = false,
+					Message = "Certificate cannot be generated. The student has not completed all modules."
+				};
+			}
 
-			var completionDate = await _courseServices.GetCourseCompletionDate(studentId, courseId);
-			string completionDateText = completionDate.HasValue ? completionDate.Value.ToString("MMMM dd, yyyy") : "N/A";
+			var completionDateResponse = await _courseServices.GetCourseCompletionDate(studentId, courseId);
+
+			string completionDateText = completionDateResponse.Success && completionDateResponse.Data.HasValue
+				? completionDateResponse.Data.Value.ToString("MMMM dd, yyyy")
+				: "N/A";
 
 			using (var ms = new MemoryStream())
 			{
@@ -106,29 +133,17 @@ namespace NonnyE_Learning.Business.Services
 				gfx.DrawString("Instructor's Signature: ______________________", signatureFont, XBrushes.Black,
 					new XRect(page.Width - 250, page.Height - 140, page.Width / 2, 30), XStringFormats.Center);
 
-				// If you have images of signatures, you can replace the text with image drawing:
-				// string directorSignaturePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/DirectorSignature.png");
-				// string instructorSignaturePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/InstructorSignature.png");
-
-				// If the signature images exist, draw them:
-				// if (File.Exists(directorSignaturePath))
-				// {
-				//     XImage directorSignature = XImage.FromFile(directorSignaturePath);
-				//     gfx.DrawImage(directorSignature, 20, page.Height - 150, 100, 30); // Adjust positioning and size
-				// }
-				// if (File.Exists(instructorSignaturePath))
-				// {
-				//     XImage instructorSignature = XImage.FromFile(instructorSignaturePath);
-				//     gfx.DrawImage(instructorSignature, page.Width - 250, page.Height - 150, 100, 30); // Adjust positioning and size
-				// }
-
-				// Save PDF to MemoryStream
 				doc.Save(ms);
 
-				return new CertificateFile
+				return new BaseResponse<CertificateFile>
 				{
-					FileBytes = ms.ToArray(),
-					FileName = $"{student.FirstName}_{student.LastName}_{course.Title}_Certificate.pdf"
+					Success = true,
+					Message = "Certificate generated successfully",
+					Data = new CertificateFile
+					{
+						FileBytes = ms.ToArray(),
+						FileName = $"{student.FirstName}_{student.LastName}_{course.Title}_Certificate.pdf"
+					}
 				};
 			}
 		}

@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-md-12">
                 <p class="lead">
-                    @((Model.Modules.Count(m => m.ModuleProgress?.IsCompleted == true) * 100.0) / Model.Modules.Count())% Completed
+                    @((Math.Round((Model.Modules.Count(m => m.ModuleProgress?.IsCompleted == true) * 100.0) / Model.Modules.Count(), 0)))% Completed
                 </p>
                 <div class="progress" style="height: 25px;">
                     <div class="progress-bar" role="progressbar"

@@ -1,4 +1,5 @@
 ﻿using NonnyE_Learning.Business.DTOs;
+using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace NonnyE_Learning.Business.Services.Interfaces
 {
 	public interface ICertificateService
 	{
-		Task<CertificateFile> GenerateCertificateAsync(string studentId,int courseId);
+		Task<BaseResponse<CertificateFile>> GenerateCertificateAsync(string studentId,int courseId);
 	}
 }

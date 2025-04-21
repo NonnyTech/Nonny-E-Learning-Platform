@@ -6,14 +6,33 @@
 
 <script>
     $(document).ready(function () {
-        // Check TempData for success or error messages
+        // Toastr config
+        toastr.options = {
+            "positionClass": "toast-top-right",
+            "timeOut": "3000",
+            "closeButton": true
+        };
+
+        // Show toastr messages from TempData
     @if (TempData["success"] != null)
     {
-        <text>toastr.success("@TempData["success"]"); </text>
+        <text>toastr.success("@TempData["success"]");</text>
     }
     @if (TempData["error"] != null)
     {
-        <text>toastr.error("@TempData["error"]"); </text>
+        <text>toastr.error("@TempData["error"]");</text>
     }
+
+        // Show toast and redirect after delay
+        $('.login-required').on('click', function (e) {
+            e.preventDefault();
+            toastr.info("Please log in to start learning.");
+
+            // Redirect to login after a short delay
+            var loginUrl = $(this).attr("href");
+            setTimeout(function () {
+                window.location.href = loginUrl;
+            }, 2000); // 2 seconds delay
         });
+    });
 </script>

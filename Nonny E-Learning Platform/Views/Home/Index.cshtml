@@ -8,34 +8,34 @@
 
                     <!-- Big Write-up at the Far End -->
                     <div class="tp-caption slider_layer_02 text-right lft tp-resizeme"
-                         data-x="right" data-hoffset="-50"
-                         data-y="center" data-voffset="-100"
-                         data-speed="1000" data-start="800"
-                         data-easing="Power3.easeInOut"
-                         data-splitin="none" data-splitout="none"
-                         data-elementdelay="0.1" data-endelementdelay="0.1"
-                         data-endspeed="1000"
-                         style="z-index: 9; max-width: 600px; max-height: auto; white-space: nowrap; font-size: 48px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+                    data-x="right" data-hoffset="-50"
+                    data-y="center" data-voffset="-100"
+                    data-speed="1000" data-start="800"
+                    data-easing="Power3.easeInOut"
+                    data-splitin="none" data-splitout="none"
+                    data-elementdelay="0.1" data-endelementdelay="0.1"
+                    data-endspeed="1000"
+                    style="z-index: 9; max-width: 600px; max-height: auto; white-space: nowrap; font-size: 48px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
                         Unlock Your Tech  <br />Potential with Us <br />Today
                     </div>
                     <br />
                     <!-- Start Learning Button Below the Text -->
                     <div class="tp-caption text-right lft tp-resizeme"
-                         data-x="right" data-hoffset="-50"
-                         data-y="center" data-voffset="50"
-                         data-speed="1000" data-start="1000"
-                         data-easing="Power3.easeInOut"
-                         data-splitin="none" data-splitout="none"
-                         data-elementdelay="0.1" data-endelementdelay="0.1"
-                         data-endspeed="1000"
-                         style="z-index: 9; max-width: auto; max-height: auto; white-space: nowrap;">
+                    data-x="right" data-hoffset="-50"
+                    data-y="center" data-voffset="50"
+                    data-speed="1000" data-start="1000"
+                    data-easing="Power3.easeInOut"
+                    data-splitin="none" data-splitout="none"
+                    data-elementdelay="0.1" data-endelementdelay="0.1"
+                    data-endspeed="1000"
+                    style="z-index: 9; max-width: auto; max-height: auto; white-space: nowrap;">
                         @if (User.Identity.IsAuthenticated)
                         {
                             <a asp-controller="Courses" asp-action="CourseList" class="btn btn-default btn-lg">Start Learning</a>
                         }
                         else
                         {
-                            <a asp-controller="Account" asp-action="Login" class="btn btn-default btn-lg">Start Learning</a>
+                            <a href="#" class="btn btn-default btn-lg login-required">Start Learning</a>
                         }
                     </div>
                 </li>
@@ -44,28 +44,35 @@
 
                     <!-- Big Write-up at the Center -->
                     <div class="tp-caption slider_layer_02 text-center lft tp-resizeme"
-                         data-x="center" data-hoffset="0"
-                         data-y="center" data-voffset="-100"
-                         data-speed="1000" data-start="800"
-                         data-easing="Power3.easeInOut"
-                         data-splitin="none" data-splitout="none"
-                         data-elementdelay="0.1" data-endelementdelay="0.1"
-                         data-endspeed="1000"
-                         style="z-index: 9; max-width: 800px; max-height: auto; white-space: nowrap; font-size: 48px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
+                    data-x="center" data-hoffset="0"
+                    data-y="center" data-voffset="-100"
+                    data-speed="1000" data-start="800"
+                    data-easing="Power3.easeInOut"
+                    data-splitin="none" data-splitout="none"
+                    data-elementdelay="0.1" data-endelementdelay="0.1"
+                    data-endspeed="1000"
+                    style="z-index: 9; max-width: 800px; max-height: auto; white-space: nowrap; font-size: 48px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">
                         Master C# from Scratch <br /> Start Your Journey Today!
                     </div>
 
                     <!-- Start Learning Button Below the Text -->
                     <div class="tp-caption text-center lft tp-resizeme"
-                         data-x="center" data-hoffset="0"
-                         data-y="center" data-voffset="50"
-                         data-speed="1000" data-start="1000"
-                         data-easing="Power3.easeInOut"
-                         data-splitin="none" data-splitout="none"
-                         data-elementdelay="0.1" data-endelementdelay="0.1"
-                         data-endspeed="1000"
-                         style="z-index: 9; max-width: auto; max-height: auto; white-space: nowrap;">
-                        <a asp-controller="Account" asp-action="Login" class="btn btn-default btn-lg">Start Learning</a>
+                    data-x="center" data-hoffset="0"
+                    data-y="center" data-voffset="50"
+                    data-speed="1000" data-start="1000"
+                    data-easing="Power3.easeInOut"
+                    data-splitin="none" data-splitout="none"
+                    data-elementdelay="0.1" data-endelementdelay="0.1"
+                    data-endspeed="1000"
+                    style="z-index: 9; max-width: auto; max-height: auto; white-space: nowrap;">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a asp-controller="Courses" asp-action="CourseList" class="btn btn-default btn-lg">Start Learning</a>
+                        }
+                        else
+                        {
+                            <a href="#" class="btn btn-default btn-lg login-required">Start Learning</a>
+                        }
                     </div>
                 </li>
             </ul>
@@ -156,7 +163,7 @@
                             <a asp-action="CourseDetail" asp-controller="Courses" asp-route-courseId="1">
                                 Web Development
                             </a>
-                            
+
                         </h4>
                         <div class="shopmeta">
                             <span class="pull-left">12 Student</span>
@@ -334,9 +341,19 @@
         </div>
         <div class="button-wrapper text-center">
             <p>With NonnyE-Learning Plus, you can become one of the best programmers in the world, become an excellent code instructor, <br> and also develop world-class software, mobile apps, and web apps.</p>
-            <a asp-controller="Account" asp-action="Login" class="btn btn-default border-radius">
-                <i class="fa fa-sign-in"></i> Join Us Today
-            </a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-default border-radius">
+                    <i class="fa fa-sign-in"></i> Join Us Today
+                </a>
+            }
+            else
+            {
+                <a href="#" class="btn btn-default border-radius login-required">
+                    <i class="fa fa-sign-in"></i> Join Us Today
+                </a>
+            }
+            
         </div>
     </div>
 </section>

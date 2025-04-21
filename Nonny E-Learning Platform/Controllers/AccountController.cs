@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Business.ViewModel;
 
@@ -13,33 +14,41 @@ namespace Nonny_E_Learning_Platform.Controllers
         {
             _authServices = authServices;
         }
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model) 
+		[HttpGet]
+		public IActionResult Login(string returnUrl = null)
+		{
+			ViewData["ReturnUrl"] = returnUrl;
+			return View();
+		}
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Login(LoginModel model, string returnUrl = null)
+		{
+			if (ModelState.IsValid)
+			{
+				var response = await _authServices.SignInAsync(model);
+				if (response.Success)
+				{
+					TempData["success"] = response.Message;
 
-        {
-            if (ModelState.IsValid)
-            {
-                var response = await _authServices.SignInAsync (model);
-                if (response.Success)
-                {
-                    TempData["success"] = "Welcome back";
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, response.Message);
-                }
-            }
-            return View(model);
+					// If the returnUrl is local, redirect to it; otherwise, go to Home
+					if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+					{
+						return Redirect(returnUrl);
+					}
 
-        }
-        [HttpGet]
+					return RedirectToAction("Index", "Home");
+				}
+				else
+				{
+					TempData["error"] = response.Message;
+				}
+			}
+
+			ViewData["ReturnUrl"] = returnUrl; // Maintain returnUrl on validation errors
+			return View(model);
+		}
+		[HttpGet]
         public IActionResult Register() 
         {
 
@@ -55,23 +64,24 @@ namespace Nonny_E_Learning_Platform.Controllers
                 var response = await _authServices.CreateNewStudentAsync(model);
                 if (response.Success)
                 {
-                    TempData["success"] = "Student created successfully. Please check your email to confirm your account";
+					TempData["success"] = response.Message;
 
                     return RedirectToAction("Login", "Account");
 
                 }
-                ModelState.AddModelError("", response.Message);
-                if (response.Errors != null)
-                {
-                    foreach (var error in response.Errors)
-                    {
-                        ModelState.AddModelError("Please check your input", error);
-                    }
-                }
-               
+				TempData["error"] = response.Message;
+
+				if (response.Errors != null)
+				{
+					foreach (var error in response.Errors)
+					{
+						ModelState.AddModelError(string.Empty, error);
+					}
+				}
 
 
-            }
+
+			}
             return View(model);
 
         }
@@ -80,7 +90,7 @@ namespace Nonny_E_Learning_Platform.Controllers
         public async Task<IActionResult> Logout()
         {
             var response = await _authServices.SignOutAsync();
-            TempData["success"] = "Hope you enjoyed your course";
+            TempData["success"] = response.Message;
             return RedirectToAction("Index", "Home");
         }
 		public IActionResult ForgetPassword()
@@ -116,7 +126,14 @@ namespace Nonny_E_Learning_Platform.Controllers
 		{
 			if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
 			{
-				return BadRequest("Invalid password reset request.");
+				var response = new BaseResponse<string>
+				{
+					Success = false,
+				    Message = "Invalid password reset request."
+				};
+				TempData["error"] = response.Message; // or return a view with error message
+				return RedirectToAction("ForgotPassword", "Account");
+
 			}
 
 			// Pass the token and userId to the reset password view
@@ -147,13 +164,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 			TempData["error"] = response.Message;
 			return View(model);
 		}
-		[HttpPost]
 
-		public IActionResult EditAccount()
-		{
-			return View();
-
-		}
 		[HttpGet]
 		[Route("Account/ConfirmEmail")]
 		public async Task<IActionResult> ConfirmEmail(string userId, string token)

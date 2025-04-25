@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using NonnyE_Learning.Business.Utility;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,7 +15,9 @@ namespace NonnyE_Learning.Business.ViewModel
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
-        public required string Email { get; set; }
+		[Remote(action: "IsEmailInUse", controller: "Account", ErrorMessage = "Email already in use")]
+		[ValidEmailDomain("gmail.com", "yahoo.com", ErrorMessage = "Email must be from gmail.com or yahoo.com")]
+		public required string Email { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]

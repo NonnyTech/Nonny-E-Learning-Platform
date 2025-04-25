@@ -1,24 +1,43 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Business.ViewModel;
+using NonnyE_Learning.Data.Models;
 
 namespace Nonny_E_Learning_Platform.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IAuthServices _authServices;
+		private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountController(IAuthServices authServices)
+		public AccountController(IAuthServices authServices, UserManager<ApplicationUser> userManager)
         {
             _authServices = authServices;
-        }
+			_userManager = userManager;
+		}
 		[HttpGet]
 		public IActionResult Login(string returnUrl = null)
 		{
 			ViewData["ReturnUrl"] = returnUrl;
 			return View();
+		}
+
+		[AcceptVerbs("Get", "Post")]
+		[AllowAnonymous]
+		public async Task<IActionResult> IsEmailInUse(string email)
+		{
+			var user = await _userManager.FindByEmailAsync(email);
+			if (user == null)
+			{
+				return Json(true);
+			}
+			else
+			{
+				return Json($"Email: {email} is already in use");
+			}
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -67,20 +86,13 @@ namespace Nonny_E_Learning_Platform.Controllers
 					TempData["success"] = response.Message;
 
                     return RedirectToAction("Login", "Account");
-
                 }
-				TempData["error"] = response.Message;
-
-				if (response.Errors != null)
+				else
 				{
-					foreach (var error in response.Errors)
-					{
-						ModelState.AddModelError(string.Empty, error);
-					}
+					TempData["error"] = response.Message;
+					return RedirectToAction("Register", "Account");
+
 				}
-
-
-
 			}
             return View(model);
 

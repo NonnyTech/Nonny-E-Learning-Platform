@@ -46,7 +46,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(150);
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = new PathString("/Administration/AccessDenied");
+    options.AccessDeniedPath = new PathString("/Home/AccessDenied");
     options.SlidingExpiration = true;
 });
 builder.Services.Configure<FlutterwaveConfig>(builder.Configuration.GetSection("FlutterwaveConfig"));

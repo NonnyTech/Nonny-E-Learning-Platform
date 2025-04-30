@@ -55,6 +55,15 @@
                                         </div>
                                     </div>
                                 </form>
+                                <div class="form-group text-center">
+                                    <form asp-controller="Account" asp-action="ExternalLogin" method="post">
+                                        <input type="hidden" name="provider" value="Google" />
+                                        <input type="hidden" name="returnUrl" value="/" />
+                                        <button type="submit" class="btn btn-danger">
+                                          <i class="fa fa-google"></i> Login with Google
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

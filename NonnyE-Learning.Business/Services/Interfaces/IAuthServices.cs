@@ -1,4 +1,5 @@
-﻿using NonnyE_Learning.Business.DTOs.Base;
+﻿using Microsoft.AspNetCore.Authentication;
+using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,12 @@ namespace NonnyE_Learning.Business.Services.Interfaces
         Task<BaseResponse<string>> ConfirmEmailAsync(string userId, string token);
         Task<BaseResponse<string>> ForgetPasswordAsync(string email);
         Task<BaseResponse<string>> ResetPasswordAsync(ResetPasswordModel model);
+
+		Task<BaseResponse<string>> ExternalLoginCallbackAsync(string returnUrl, string remoteError);
+
+        AuthenticationProperties ConfigureExternalAuthentication(string provider, string redirectUrl);
+
+
 
 
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Intrinsics.X86;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -65,7 +67,7 @@ namespace NonnyE_Learning.Business.Services
                 FirstName= model.FirstName,
                 LastName = model.LastName,
                 PhoneNumber = model.PhoneNumber,
-				EmailConfirmed = true,
+				EmailConfirmed = false,
 				
             };
 
@@ -197,7 +199,6 @@ namespace NonnyE_Learning.Business.Services
                 Message = "Logout successful."
             };
         }
-
 		public async Task<BaseResponse<string>> ConfirmEmailAsync(string userId, string token)
 		{
 			if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
@@ -219,7 +220,9 @@ namespace NonnyE_Learning.Business.Services
 				};
 			}
 
-			var result = await _userManager.ConfirmEmailAsync(user, token);
+			var decodedToken = Uri.UnescapeDataString(token);
+
+			var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
 			if (result.Succeeded)
 			{
 				return new BaseResponse<string>
@@ -315,8 +318,129 @@ namespace NonnyE_Learning.Business.Services
 			};
 		}
 
+		public async Task<BaseResponse<string>> ExternalLoginCallbackAsync(string returnUrl, string remoteError)
+		{
+			returnUrl ??= "/";
 
+			if (remoteError != null)
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = $"Error from external provider: {remoteError}"
+				};
+			}
 
+			var info = await _signInManager.GetExternalLoginInfoAsync();
+			if (info == null)
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "Error loading external login information."
+				};
+			}
+
+			var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+			if (result.Succeeded)
+			{
+				var existingUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+				if (existingUser != null && !await _userManager.IsEmailConfirmedAsync(existingUser))
+				{
+					await _signInManager.SignOutAsync();
+					return new BaseResponse<string>
+					{
+						Success = false,
+						Message = "You cannot log in at the moment—please confirm your email address."
+					};
+				}
+				return new BaseResponse<string> { Success = true, Message = "Login successful.", Data = returnUrl };
+			}
+
+			var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+			var firstName = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? "GoogleUser";
+			var lastName = info.Principal.FindFirstValue(ClaimTypes.Surname);
+
+			if (email == null)
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "Email claim not received from external provider."
+				};
+			}
+
+			var user = await _userManager.FindByEmailAsync(email);
+			if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "You cannot log in at the moment—please confirm your email address."
+				};
+			}
+
+			if (user == null)
+			{
+				user = new ApplicationUser
+				{
+					UserName = email,
+					Email = email,
+					FirstName = firstName,
+					LastName = lastName,
+					EmailConfirmed = false
+				};
+
+				var createResult = await _userManager.CreateAsync(user);
+				if (!createResult.Succeeded)
+				{
+					return new BaseResponse<string>
+					{
+						Success = false,
+						Message = "Failed to create user.",
+						Errors = createResult.Errors.Select(e => e.Description)
+					};
+				}
+
+				var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+				var confirmationLink = $"{_configuration["AppBaseUrl"]}/Account/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+				var emailBody = EmailTemplate.RegistrationConfirmationTemplate().Replace("{{ConfirmationLink}}", confirmationLink);
+				_emailServices.SendConfirmationEmail(user.Email, "Confirm your email", emailBody);
+			}
+
+			var addLoginResult = await _userManager.AddLoginAsync(user, info);
+			if (!addLoginResult.Succeeded)
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "Failed to link external login.",
+					Errors = addLoginResult.Errors.Select(e => e.Description)
+				};
+			}
+
+			if (!await _userManager.IsEmailConfirmedAsync(user))
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "You cannot log in at the moment—please confirm your email address."
+				};
+			}
+
+			await _signInManager.SignInAsync(user, false);
+			return new BaseResponse<string>
+			{
+				Success = true,
+				Message = "Login successful.",
+				Data = returnUrl
+			};
+		}
+
+		public AuthenticationProperties ConfigureExternalAuthentication(string provider, string redirectUrl)
+		{
+			return _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+		}
 	}
 }
 

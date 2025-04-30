@@ -26,6 +26,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.8" />
     <PackageReference Include="Paystack.Net" Version="1.1.1" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.7" />
+
   </ItemGroup>
 
 </Project>

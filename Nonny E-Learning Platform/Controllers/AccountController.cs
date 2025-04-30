@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NonnyE_Learning.Business.DTOs.Base;
+using NonnyE_Learning.Business.Services;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Business.ViewModel;
+using NonnyE_Learning.Data.Helper;
 using NonnyE_Learning.Data.Models;
+using System.Security.Claims;
 
 namespace Nonny_E_Learning_Platform.Controllers
 {
@@ -12,11 +15,36 @@ namespace Nonny_E_Learning_Platform.Controllers
     {
         private readonly IAuthServices _authServices;
 		private readonly UserManager<ApplicationUser> _userManager;
+		
 
 		public AccountController(IAuthServices authServices, UserManager<ApplicationUser> userManager)
         {
             _authServices = authServices;
 			_userManager = userManager;
+			
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult ExternalLogin(string provider, string returnUrl = null)
+		{
+			var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
+			var properties = _authServices.ConfigureExternalAuthentication(provider, redirectUrl);
+			return Challenge(properties, provider);
+		}
+		[HttpGet]
+		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+		{
+			var response = await _authServices.ExternalLoginCallbackAsync(returnUrl, remoteError);
+
+			if (!response.Success)
+			{
+				TempData["error"] = response.Message;
+				return RedirectToAction(nameof(Login));
+			}
+
+			TempData["success"] = response.Message;
+			return LocalRedirect(response.Data);
 		}
 		[HttpGet]
 		public IActionResult Login(string returnUrl = null)
@@ -26,7 +54,6 @@ namespace Nonny_E_Learning_Platform.Controllers
 		}
 
 		[AcceptVerbs("Get", "Post")]
-		[AllowAnonymous]
 		public async Task<IActionResult> IsEmailInUse(string email)
 		{
 			var user = await _userManager.FindByEmailAsync(email);

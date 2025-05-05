@@ -27,7 +27,7 @@ namespace NonnyE_Learning.Business.Services
 			_smtpClient = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port)
 			{
 				UseDefaultCredentials = false,
-				EnableSsl = false,
+				EnableSsl = true,
 
 			};
 
@@ -35,6 +35,7 @@ namespace NonnyE_Learning.Business.Services
 			_smtpClient.Credentials = new NetworkCredential(_smtpSettings.User, _smtpSettings.Pass);
 			_fromEmail = _smtpSettings.FromEmail;
 			_fromName = _smtpSettings.FromName;
+
 
 		}
 
@@ -114,6 +115,7 @@ namespace NonnyE_Learning.Business.Services
 			{
 				// Log the error or handle as needed
 				Console.WriteLine($"Error sending confirmation email: {ex.Message}");
+				throw;
 			}
 
 		}

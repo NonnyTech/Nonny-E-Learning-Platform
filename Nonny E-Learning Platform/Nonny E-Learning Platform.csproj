@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Nonny_E_Learning_Platform</RootNamespace>
+    <UserSecretsId>662ee35c-e36f-4bba-8044-3078c59a38b2</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

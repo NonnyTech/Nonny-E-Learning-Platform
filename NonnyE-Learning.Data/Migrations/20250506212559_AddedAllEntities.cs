@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace NonnyE_Learning.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class addedMyEntities : Migration
+    public partial class AddedAllEntities : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -100,6 +98,28 @@ namespace NonnyE_Learning.Data.Migrations
                 defaultValue: "");
 
             migrationBuilder.CreateTable(
+                name: "Modules",
+                columns: table => new
+                {
+                    ModuleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Modules", x => x.ModuleId);
+                    table.ForeignKey(
+                        name: "FK_Modules_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "CourseId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
@@ -132,16 +152,68 @@ namespace NonnyE_Learning.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Courses",
-                columns: new[] { "CourseId", "Category", "Description", "Duration", "ImageUrl", "Instructor", "Lectures", "Price", "Title" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "ModuleProgress",
+                columns: table => new
                 {
-                    { 1, "Web Development", "Build powerful web applications using ASP.NET Core MVC.", "12 weeks", "/upload/xcourse_01.png.pagespeed.ic.XTOvCuUmZu.png", "Anthony Ikemefuna", 23, 400000m, "ASP.NET Core MVC" },
-                    { 2, "Design", "Master graphic design using Adobe Photoshop and Illustrator.", "18 weeks", "/upload/xcourse_02.png.pagespeed.ic.PL7Wu2UcSB.png", "Rita Ikemefuna", 23, 250000m, "Graphics Design with Corel draw." },
-                    { 3, "Programming", "Learn the fundamentals of C# programming.", "20 weeks", "/upload/xcourse_03.png.pagespeed.ic.8e1MyY5M7i.png", "Stanley Nonso", 23, 300000m, "C# for Beginners" },
-                    { 4, "Backend Development", "Learn how to build scalable Web APIs using ASP.NET Core.", "24 weeks", "/upload/xcourse_04.png.pagespeed.ic.2rIKmUwjA7.png", "Anthony Ikemefuna", 23, 500000m, "Building Web APIs with .NET" }
+                    ModuleProgressId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ModuleId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
+                    CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ModuleProgress", x => x.ModuleProgressId);
+                    table.ForeignKey(
+                        name: "FK_ModuleProgress_Modules_ModuleId",
+                        column: x => x.ModuleId,
+                        principalTable: "Modules",
+                        principalColumn: "ModuleId",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "QuizQuestions",
+                columns: table => new
+                {
+                    QuizQuestionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OptionA = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OptionB = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OptionC = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OptionD = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorrectOption = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ModuleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuizQuestions", x => x.QuizQuestionId);
+                    table.ForeignKey(
+                        name: "FK_QuizQuestions_Modules_ModuleId",
+                        column: x => x.ModuleId,
+                        principalTable: "Modules",
+                        principalColumn: "ModuleId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ModuleProgress_ModuleId",
+                table: "ModuleProgress",
+                column: "ModuleId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Modules_CourseId",
+                table: "Modules",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizQuestions_ModuleId",
+                table: "QuizQuestions",
+                column: "ModuleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_CourseId",
@@ -170,27 +242,16 @@ namespace NonnyE_Learning.Data.Migrations
                 table: "Enrollements");
 
             migrationBuilder.DropTable(
+                name: "ModuleProgress");
+
+            migrationBuilder.DropTable(
+                name: "QuizQuestions");
+
+            migrationBuilder.DropTable(
                 name: "Transactions");
 
-            migrationBuilder.DeleteData(
-                table: "Courses",
-                keyColumn: "CourseId",
-                keyValue: 1);
-
-            migrationBuilder.DeleteData(
-                table: "Courses",
-                keyColumn: "CourseId",
-                keyValue: 2);
-
-            migrationBuilder.DeleteData(
-                table: "Courses",
-                keyColumn: "CourseId",
-                keyValue: 3);
-
-            migrationBuilder.DeleteData(
-                table: "Courses",
-                keyColumn: "CourseId",
-                keyValue: 4);
+            migrationBuilder.DropTable(
+                name: "Modules");
 
             migrationBuilder.DropColumn(
                 name: "EnrollmentDate",

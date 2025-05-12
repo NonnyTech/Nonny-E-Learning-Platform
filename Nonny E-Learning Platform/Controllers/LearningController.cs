@@ -73,5 +73,58 @@ namespace Nonny_E_Learning_Platform.Controllers
 			return RedirectToAction("StartLearning", new { courseId = (await _moduleServices.GetModuleById(moduleId)).CourseId });
 		}
 
+		public async Task<IActionResult> TakeQuiz(int moduleId)
+		{
+			var questions = await _moduleServices.GetQuizQuestionsByModuleIdAsync(moduleId);
+
+			var model = new QuizSubmissionViewModel
+			{
+				ModuleId = moduleId,
+				Answers = questions.Select(q => new QuestionAnswer
+				{
+					QuizQuestionId = q.QuizQuestionId
+				}).ToList()
+			};
+
+			ViewBag.Questions = questions;
+			return View(model);
+		}
+		[HttpPost]
+		public async Task<IActionResult> SubmitQuiz(QuizSubmissionViewModel submission)
+		{
+			int correct = 0;
+
+			foreach (var answer in submission.Answers)
+			{
+				var question = await _moduleServices.GetQuizQuestionByIdAsync(answer.QuizQuestionId);
+				if (question != null && question.CorrectOption.Equals(answer.SelectedOption, StringComparison.OrdinalIgnoreCase))
+				{
+					correct++;
+				}
+			}
+
+			int total = submission.Answers.Count;
+			double score = (double)correct / total * 100;
+
+			if (score >= 80)
+			{
+				var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				await _moduleServices.MarkModuleAsCompletedAsync(submission.ModuleId, studentId);
+				TempData["success"] = $"Quiz passed! You scored {score:0}%";
+			}
+			else
+			{
+				TempData["error"] = $"You scored {score:0}%. Minimum is 80%. Please retake the quiz.";
+				return RedirectToAction("TakeQuiz", new { moduleId = submission.ModuleId });
+			}
+
+			var courseId = (await _moduleServices.GetModuleById(submission.ModuleId)).CourseId;
+			return RedirectToAction("StartLearning", new { courseId });
+		}
+		public async Task<IActionResult> TakeTheQuiz()
+		{
+			return View();
+		}
+
 	}
 }

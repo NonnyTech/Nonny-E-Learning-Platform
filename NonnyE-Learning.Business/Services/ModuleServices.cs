@@ -21,10 +21,11 @@ namespace NonnyE_Learning.Business.Services
 
 		public async Task<List<Module>> GetModulesByCourseIdAsync(int courseId)
 		{
-			return await _context.Modules
+			 return await _context.Modules
 					   .Where(m => m.CourseId == courseId)
 					   .OrderBy(m => m.Order) // Ensure modules are in order
 					   .ToListAsync();
+			
 		}
 
 		public async Task MarkModuleAsCompletedAsync(int moduleId, string studentId)
@@ -83,6 +84,20 @@ namespace NonnyE_Learning.Business.Services
 		public async Task<ApplicationUser> GetStudentById(string studentId)
 		{
 			return await _context.Users.FirstOrDefaultAsync(a => a.Id == studentId);
+		}
+
+		public async Task<List<QuizQuestion>> GetQuizQuestionsByModuleIdAsync(int moduleId)
+		{
+			return await _context.QuizQuestions
+									 .Where(q => q.ModuleId == moduleId)
+									 .OrderBy(q => q.Order)
+									 .ToListAsync();
+		}
+
+		public async Task<QuizQuestion> GetQuizQuestionByIdAsync(int quizQuestionId)
+		{
+			return await _context.QuizQuestions
+									 .FirstOrDefaultAsync(q => q.QuizQuestionId == quizQuestionId);
 		}
 	}
 	}

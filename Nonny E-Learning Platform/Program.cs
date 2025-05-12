@@ -12,6 +12,12 @@ using PdfSharp.Charting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load user secrets only in Development
+if (builder.Environment.IsDevelopment())
+{
+	builder.Configuration.AddUserSecrets<Program>();
+}
+
 // Add services to the container.
 
 builder.Services.AddAuthentication(options =>
@@ -32,6 +38,8 @@ var connectionString = builder.Configuration.GetConnectionString("MyConnections"
 
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(connectionString));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddHostedService<SeedDataService>();
+
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

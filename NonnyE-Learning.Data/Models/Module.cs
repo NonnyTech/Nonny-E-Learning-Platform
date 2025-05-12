@@ -17,6 +17,8 @@ namespace NonnyE_Learning.Data.Models
 		// Navigation Property
 		public virtual Course Course { get; set; }
 		public ModuleProgress ModuleProgress { get; set; }
+		public virtual ICollection<QuizQuestion> QuizQuestions { get; set; }
+
 
 	}
 }

@@ -263,56 +263,6 @@ namespace NonnyE_Learning.Data.Migrations
                     b.HasKey("CourseId");
 
                     b.ToTable("Courses");
-
-                    b.HasData(
-                        new
-                        {
-                            CourseId = 1,
-                            Category = "Web Development",
-                            Description = "Build powerful web applications using ASP.NET Core MVC.",
-                            Duration = "12 weeks",
-                            ImageUrl = "/upload/xcourse_01.png.pagespeed.ic.XTOvCuUmZu.png",
-                            Instructor = "Anthony Ikemefuna",
-                            Lectures = 23,
-                            Price = 400000m,
-                            Title = "ASP.NET Core MVC"
-                        },
-                        new
-                        {
-                            CourseId = 2,
-                            Category = "Design",
-                            Description = "Master graphic design using Adobe Photoshop and Illustrator.",
-                            Duration = "18 weeks",
-                            ImageUrl = "/upload/xcourse_02.png.pagespeed.ic.PL7Wu2UcSB.png",
-                            Instructor = "Rita Ikemefuna",
-                            Lectures = 23,
-                            Price = 250000m,
-                            Title = "Graphics Design with Corel draw."
-                        },
-                        new
-                        {
-                            CourseId = 3,
-                            Category = "Programming",
-                            Description = "Learn the fundamentals of C# programming.",
-                            Duration = "20 weeks",
-                            ImageUrl = "/upload/xcourse_03.png.pagespeed.ic.8e1MyY5M7i.png",
-                            Instructor = "Stanley Nonso",
-                            Lectures = 23,
-                            Price = 300000m,
-                            Title = "C# for Beginners"
-                        },
-                        new
-                        {
-                            CourseId = 4,
-                            Category = "Backend Development",
-                            Description = "Learn how to build scalable Web APIs using ASP.NET Core.",
-                            Duration = "24 weeks",
-                            ImageUrl = "/upload/xcourse_04.png.pagespeed.ic.2rIKmUwjA7.png",
-                            Instructor = "Anthony Ikemefuna",
-                            Lectures = 23,
-                            Price = 500000m,
-                            Title = "Building Web APIs with .NET"
-                        });
                 });
 
             modelBuilder.Entity("NonnyE_Learning.Data.Models.Enrollment", b =>
@@ -376,80 +326,6 @@ namespace NonnyE_Learning.Data.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("Modules");
-
-                    b.HasData(
-                        new
-                        {
-                            ModuleId = 1,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 1,
-                            Title = "Introduction to C#"
-                        },
-                        new
-                        {
-                            ModuleId = 2,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 2,
-                            Title = "Getting ready for C#"
-                        },
-                        new
-                        {
-                            ModuleId = 3,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 3,
-                            Title = "The World of Variables and Operators"
-                        },
-                        new
-                        {
-                            ModuleId = 4,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 4,
-                            Title = "Arrays, Strings and Lists"
-                        },
-                        new
-                        {
-                            ModuleId = 5,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 5,
-                            Title = "Making our Program Interactive"
-                        },
-                        new
-                        {
-                            ModuleId = 6,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 6,
-                            Title = "Making Choices and Decisions"
-                        },
-                        new
-                        {
-                            ModuleId = 7,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 7,
-                            Title = "Object-Oriented Programming Part "
-                        },
-                        new
-                        {
-                            ModuleId = 8,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 8,
-                            Title = "Enum and Struct"
-                        },
-                        new
-                        {
-                            ModuleId = 9,
-                            CourseContent = "We are one",
-                            CourseId = 3,
-                            Order = 8,
-                            Title = "Enum and Struct"
-                        });
                 });
 
             modelBuilder.Entity("NonnyE_Learning.Data.Models.ModuleProgress", b =>
@@ -479,6 +355,51 @@ namespace NonnyE_Learning.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("ModuleProgress");
+                });
+
+            modelBuilder.Entity("NonnyE_Learning.Data.Models.QuizQuestion", b =>
+                {
+                    b.Property<int>("QuizQuestionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuizQuestionId"));
+
+                    b.Property<string>("CorrectOption")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OptionA")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionB")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionD")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("QuizQuestionId");
+
+                    b.HasIndex("ModuleId");
+
+                    b.ToTable("QuizQuestions");
                 });
 
             modelBuilder.Entity("NonnyE_Learning.Data.Models.Transaction", b =>
@@ -624,6 +545,17 @@ namespace NonnyE_Learning.Data.Migrations
                     b.Navigation("Module");
                 });
 
+            modelBuilder.Entity("NonnyE_Learning.Data.Models.QuizQuestion", b =>
+                {
+                    b.HasOne("NonnyE_Learning.Data.Models.Module", "Module")
+                        .WithMany("QuizQuestions")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Module");
+                });
+
             modelBuilder.Entity("NonnyE_Learning.Data.Models.Transaction", b =>
                 {
                     b.HasOne("NonnyE_Learning.Data.Models.Course", null)
@@ -650,6 +582,8 @@ namespace NonnyE_Learning.Data.Migrations
                 {
                     b.Navigation("ModuleProgress")
                         .IsRequired();
+
+                    b.Navigation("QuizQuestions");
                 });
 #pragma warning restore 612, 618
         }

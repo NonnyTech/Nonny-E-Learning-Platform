@@ -16,7 +16,8 @@ namespace NonnyE_Learning.Business.Services.Interfaces
 		Task<ModuleProgress> GetModuleProgressAsync(int moduleId, string studentId);
 		Task<bool> HasUserCompletedAllModules(int courseId, string studentId);
 		public Task<ApplicationUser> GetStudentById(string studentId);
-
+		Task<List<QuizQuestion>> GetQuizQuestionsByModuleIdAsync(int moduleId);
+		Task<QuizQuestion> GetQuizQuestionByIdAsync(int quizQuestionId);
 
 	}
 }

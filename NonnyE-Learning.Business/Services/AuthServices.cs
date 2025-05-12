@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -60,9 +61,13 @@ namespace NonnyE_Learning.Business.Services
 					Errors = passwordValidationResult.Errors.Select(e => e.Description)
 				};
 			}
+
+			var customUserId = await GenerateCustomUserIdAsync();
+
 			ApplicationUser user = new ApplicationUser
             {
-                UserName= model.Email,
+				Id = customUserId,
+				UserName = model.Email,
                 Email = model.Email,
                 FirstName= model.FirstName,
                 LastName = model.LastName,
@@ -105,8 +110,28 @@ namespace NonnyE_Learning.Business.Services
             };
         }
 
+		private async Task<string> GenerateCustomUserIdAsync()
+		{
+			// Get the latest user with custom ID pattern
+			var users = await _userManager.Users
+				.Where(u => u.Id.StartsWith("NonnyPlus"))
+				.ToListAsync();
 
-        public async Task<BaseResponse<string>> SignInAsync(LoginModel model)
+			// Find max number used so far
+			var maxNumber = users
+				.Select(u => u.Id.Replace("NonnyPlus", ""))
+				.Where(id => int.TryParse(id, out _))
+				.Select(int.Parse)
+				.DefaultIfEmpty(0)
+				.Max();
+
+			var nextId = maxNumber + 1;
+
+			return $"NonnyPlus{nextId.ToString("D3")}"; // e.g., NonnyPlus001
+		}
+
+
+		public async Task<BaseResponse<string>> SignInAsync(LoginModel model)
         {
 
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -151,7 +176,7 @@ namespace NonnyE_Learning.Business.Services
                     Message = "Invalid login attempt."
                 };
             }
-            else if (result.IsLockedOut)
+            if (result.IsLockedOut)
             {
                 return new BaseResponse<string>
                 {
@@ -382,8 +407,11 @@ namespace NonnyE_Learning.Business.Services
 
 			if (user == null)
 			{
+				var customUserId = await GenerateCustomUserIdAsync();
+
 				user = new ApplicationUser
 				{
+					Id = customUserId,
 					UserName = email,
 					Email = email,
 					FirstName = firstName,

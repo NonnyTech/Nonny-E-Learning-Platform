@@ -1,0 +1,43 @@
+﻿@model NonnyE_Learning.Business.ViewModel.QuizSubmissionViewModel
+@using NonnyE_Learning.Data.Models
+
+
+@{
+    var questions = ViewBag.Questions as List<QuizQuestion>;
+}
+
+<section class="grey page-title">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-left">
+                <h1>Module quiz</h1>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="white section">
+    <div class="container">
+
+<form asp-action="SubmitQuiz" method="post">
+    <input type="hidden" asp-for="ModuleId" />
+
+    @for (int i = 0; i < questions.Count; i++)
+    {
+        var q = questions[i];
+        <div>
+            <p><strong>@(i + 1). @q.QuestionText</strong></p>
+            <input type="hidden" name="Answers[@i].QuizQuestionId" value="@q.QuizQuestionId" />
+            <div><input type="radio" name="Answers[@i].SelectedOption" value="A" /> A. @q.OptionA</div>
+            <div><input type="radio" name="Answers[@i].SelectedOption" value="B" /> B. @q.OptionB</div>
+            <div><input type="radio" name="Answers[@i].SelectedOption" value="C" /> C. @q.OptionC</div>
+            <div><input type="radio" name="Answers[@i].SelectedOption" value="D" /> D. @q.OptionD</div>
+        </div>
+        <hr />
+    }
+
+    <button type="submit" class="btn btn-primary">Submit Quiz</button>
+</form>
+
+    </div>
+
+</section>

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NonnyE-Learning.Data", "Non
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NonnyE-Learning.Business", "NonnyE-Learning.Business\NonnyE-Learning.Business.csproj", "{74B5E03D-B489-426A-8A57-CF6314610EFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nonny E Learning.Test", "Nonny E Learning.Test\Nonny E Learning.Test.csproj", "{C3D93028-17B9-486B-B4C5-566B02ADFD0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{74B5E03D-B489-426A-8A57-CF6314610EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74B5E03D-B489-426A-8A57-CF6314610EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74B5E03D-B489-426A-8A57-CF6314610EFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3D93028-17B9-486B-B4C5-566B02ADFD0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3D93028-17B9-486B-B4C5-566B02ADFD0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3D93028-17B9-486B-B4C5-566B02ADFD0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3D93028-17B9-486B-B4C5-566B02ADFD0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

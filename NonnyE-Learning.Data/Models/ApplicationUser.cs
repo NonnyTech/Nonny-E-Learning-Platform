@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NonnyE_Learning.Data.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser <string>
     {
 		public string FirstName { get; set; }
 		public string LastName { get; set; }

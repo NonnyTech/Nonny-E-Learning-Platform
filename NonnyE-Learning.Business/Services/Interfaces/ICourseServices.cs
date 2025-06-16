@@ -16,6 +16,8 @@ namespace NonnyE_Learning.Business.Services.Interfaces
 		Task<BaseResponse<Course>> UpdateCourseAsync(Course course);
 		Task<BaseResponse<bool>> DeleteCourseAsync(int courseId);
 		Task<BaseResponse<DateTime?>> GetCourseCompletionDate(string studentId, int courseId);
+		Task<List<Course>> GetCoursesByInstructorAsync(string firstName, string lastName);
+
 
 	}
 }

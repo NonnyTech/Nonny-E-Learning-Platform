@@ -42,7 +42,7 @@ namespace NonnyE_Learning.Business.Services
 
 		public void SendConfirmationEmail(string email, string subject, string body)
 		{
-			
+
 			var mailMessage = new MailMessage
 			{
 				From = new MailAddress(_fromEmail, _fromName),
@@ -51,7 +51,7 @@ namespace NonnyE_Learning.Business.Services
 				IsBodyHtml = true
 			};
 
-			
+
 			mailMessage.To.Add(email);
 
 			try

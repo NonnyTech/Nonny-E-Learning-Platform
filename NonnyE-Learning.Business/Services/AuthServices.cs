@@ -10,7 +10,6 @@ using NonnyE_Learning.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -101,7 +100,7 @@ namespace NonnyE_Learning.Business.Services
 
 			//Send the confirmation email
 			string emailBody = EmailTemplate.RegistrationConfirmationTemplate().Replace("{{ConfirmationLink}}", confirmationLink);
-			_emailServices.SendConfirmationEmail(user.Email, "Confirm your email", emailBody);
+			 _emailServices.SendConfirmationEmail(user.Email, "Confirm your email", emailBody);
 			return new BaseResponse<string>
             {
                 Success = true,
@@ -160,9 +159,9 @@ namespace NonnyE_Learning.Business.Services
                 return new BaseResponse<string>
                 {
                     Success = false,
-                    Message = "Invalid Login Attempt."
+					Message = "Invalid email or password. Please try again."
 
-                };
+				};
 
 
             }
@@ -173,8 +172,8 @@ namespace NonnyE_Learning.Business.Services
                 return new BaseResponse<string>
                 {
                     Success = false,
-                    Message = "Invalid login attempt."
-                };
+					Message = "Invalid email or password. Please try again."
+				};
             }
             if (result.IsLockedOut)
             {
@@ -196,6 +195,15 @@ namespace NonnyE_Learning.Business.Services
 				};
 			}
 			else if (roles.Contains("Student"))
+			{
+				return new BaseResponse<string>
+				{
+					Success = true,
+					Message = "Login successful.",
+					Data = "Index/Home"
+				};
+			}
+			else if (roles.Contains("Instructor"))
 			{
 				return new BaseResponse<string>
 				{

@@ -14,5 +14,6 @@ namespace NonnyE_Learning.Business.AppSetting
 		public string Pass { get; set; }
 		public string FromEmail { get; set; }
 		public string FromName { get; set; }
+
 	}
 }

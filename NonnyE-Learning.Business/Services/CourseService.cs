@@ -186,6 +186,21 @@ namespace NonnyE_Learning.Business.Services
 				};
 			}
 		}
+
+		public async Task<List<Course>> GetCoursesByInstructorAsync(string firstName, string lastName)
+		{
+		
+			string fullName = $"{firstName} {lastName}";
+
+			var allCourses = await _context.Courses
+				.Where(c => c.Instructor != null)
+				.ToListAsync();
+
+			return allCourses
+				.Where(c => c.Instructor.Trim().Equals(fullName, StringComparison.OrdinalIgnoreCase))
+				.ToList();
+		}
+	
 	}
 
 }

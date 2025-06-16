@@ -27,7 +27,7 @@
                                                 <div class="box">
                                                     <ul>
                                                         <li><a asp-controller="Courses" asp-action="CourseList">Courses List</a></li>
-                                                        <li><a asp-controller="Courses" asp-action="Instructors">Course Instructors</a></li>
+                                                        <li><a asp-controller="Courses" asp-action="CourseInstructor">Course Instructors</a></li>
                                                         @if (User.Identity.IsAuthenticated)
                                                         {
                                                             <li><a asp-controller="Courses" asp-action="MyCourses">View My Courses</a></li>

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business.Services;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -15,15 +18,18 @@ namespace Nonny_E_Learning_Platform.Controllers
        
         private readonly IWebHostEnvironment _webHostEnvironment;
 		private readonly IEnrollmentServices _enrollmentServices;
+		private readonly UserManager<ApplicationUser> _userManager;
 
-		public CoursesController(ICourseServices courseServices,IWebHostEnvironment webHostEnvironment, IEnrollmentServices enrollmentServices)
+		public CoursesController(ICourseServices courseServices,IWebHostEnvironment webHostEnvironment, IEnrollmentServices enrollmentServices, UserManager<ApplicationUser> userManager)
         {
             _courseServices = courseServices;
             _webHostEnvironment = webHostEnvironment;
 			_enrollmentServices = enrollmentServices;
+			_userManager = userManager;
 		}
 
-        public async Task<IActionResult> CourseList()
+		[HttpGet]
+		public async Task<IActionResult> CourseList()
         {
 			var response = await _courseServices.GetAllCoursesAsync();
 
@@ -36,12 +42,15 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			return View(response.Data);
 		}
-        public IActionResult Quiz()
+
+		[HttpGet]
+		public IActionResult Quiz()
         {
             return View();
         }
-       
-        public async Task<IActionResult> CourseDetail(int courseId)
+
+		[HttpGet]
+		public async Task<IActionResult> CourseDetail(int courseId)
 		{
 			var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -53,6 +62,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 			}
 
 			var course = response.Data;
+
 			var enrollmentId = await _enrollmentServices.CreateOrGetEnrollmentAsync(courseId, studentId);
 
 			if (enrollmentId == null)
@@ -79,6 +89,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 		}
 
+		[HttpGet]
 		public async Task<IActionResult> MyCourses()
 		{
 			var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -92,5 +103,36 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			return View(courses);
 		}
+
+		[Authorize(Roles = "Instructor")]
+		public IActionResult CourseInstructor()
+		{
+			return View();
+		}
+
+		[Authorize(Roles = "Instructor")]
+		public async Task<IActionResult> ViewMyCourse()
+		{
+			var user = await _userManager.GetUserAsync(User);
+
+			if (user == null)
+			{
+				TempData["error"] = "User Not Found";
+				return RedirectToAction("Index", "Home");
+
+			}
+
+			var instructorFullName = $"{user.FirstName?.Trim()} {user.LastName?.Trim()}";
+
+			var courses = await _courseServices.GetCoursesByInstructorAsync(user.FirstName, user.LastName);
+
+			if (courses == null || !courses.Any())
+			{
+				TempData["error"] = $"No courses found for instructor: {instructorFullName}";
+			}
+
+			return View("ViewMyCourse", courses);
+		}
+
 	}
 }

@@ -23,14 +23,16 @@ namespace NonnyE_Learning.Business.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly IConfiguration _configuration;
 		private readonly IEmailServices _emailServices;
+		private readonly IUserTokenService _userTokenService;
 
-		public AuthServices(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, IEmailServices emailServices)
+		public AuthServices(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, IEmailServices emailServices, IUserTokenService userTokenService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
 			_configuration = configuration;
 			_emailServices = emailServices;
+			_userTokenService = userTokenService;
 		}
 
         public async Task<BaseResponse<string>> CreateNewStudentAsync(RegisterModel model)
@@ -128,23 +130,18 @@ namespace NonnyE_Learning.Business.Services
 
 			return $"NonnyPlus{nextId.ToString("D3")}"; // e.g., NonnyPlus001
 		}
-
-
 		public async Task<BaseResponse<string>> SignInAsync(LoginModel model)
-        {
+		{
+			var user = await _userManager.FindByEmailAsync(model.Email);
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
-
-            if (user == null) 
-            
-            { 
-                return  new BaseResponse<string> 
-                {
-                    Success = false,
-                    Message = "User not found."
-
-                };     
-            }
+			if (user == null)
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "User not found."
+				};
+			}
 
 			if (!await _userManager.IsEmailConfirmedAsync(user))
 			{
@@ -154,65 +151,40 @@ namespace NonnyE_Learning.Business.Services
 					Message = "Email not confirmed. Please check your email for the confirmation link."
 				};
 			}
+
 			if (!await _userManager.CheckPasswordAsync(user, model.Password))
-            {
-                return new BaseResponse<string>
-                {
-                    Success = false,
-					Message = "Invalid email or password. Please try again."
-
-				};
-
-
-            }
-
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
-            if (!result.Succeeded)
-            {
-                return new BaseResponse<string>
-                {
-                    Success = false,
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
 					Message = "Invalid email or password. Please try again."
 				};
-            }
-            if (result.IsLockedOut)
-            {
-                return new BaseResponse<string>
-                {
-                    Success = false,
+			}
+
+			var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
+
+			if (result.IsLockedOut)
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
 					Message = "Your account is locked due to multiple failed login attempts. Please try again later or contact support."
 				};
-            }
+			}
 
-            var roles = await _userManager.GetRolesAsync(user);
-			if (roles.Contains("SuperAdmin"))
+			if (!result.Succeeded)
 			{
 				return new BaseResponse<string>
 				{
-					Success = true,
-					Message = "Login successful.",
-					Data = "Index/Home"
+					Success = false,
+					Message = "Invalid email or password. Please try again."
 				};
 			}
-			else if (roles.Contains("Student"))
-			{
-				return new BaseResponse<string>
-				{
-					Success = true,
-					Message = "Login successful.",
-					Data = "Index/Home"
-				};
-			}
-			else if (roles.Contains("Instructor"))
-			{
-				return new BaseResponse<string>
-				{
-					Success = true,
-					Message = "Login successful.",
-					Data = "Index/Home"
-				};
-			}
-			else
+
+			// Get user roles
+			var roles = await _userManager.GetRolesAsync(user);
+
+			if (!roles.Contains("SuperAdmin") && !roles.Contains("Student") && !roles.Contains("Instructor"))
 			{
 				return new BaseResponse<string>
 				{
@@ -221,9 +193,17 @@ namespace NonnyE_Learning.Business.Services
 				};
 			}
 
-		}
+			// ✅ Generate and return JWT token
+			var token = _userTokenService.GenerateToken(user, roles);
 
-        public async Task<BaseResponse<string>> SignOutAsync()
+			return new BaseResponse<string>
+			{
+				Success = true,
+				Message = "Login successful.",
+				Data = token
+			};
+		}
+		public async Task<BaseResponse<string>> SignOutAsync()
         {
             await _signInManager.SignOutAsync();
             return new BaseResponse<string>

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NonnyE_Learning.Business.AppSetting;
 using NonnyE_Learning.Business.Services;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -9,6 +11,7 @@ using NonnyE_Learning.Data.DbContext;
 using NonnyE_Learning.Data.Helper;
 using NonnyE_Learning.Data.Models;
 using PdfSharp.Charting;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +44,27 @@ builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpS
 builder.Services.AddHostedService<SeedDataService>();
 
 
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = jwtSettings.Issuer,
+		ValidAudience = jwtSettings.Audience,
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+	};
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -81,6 +105,8 @@ builder.Services.AddTransient<IEnrollmentServices, EnrollmentServices>();
 builder.Services.AddTransient<IModuleServices, ModuleServices>();
 builder.Services.AddTransient<ICertificateService, CertificateServices>();
 builder.Services.AddHttpClient<IFlutterwaveServices, FlutterwaveServices>();
+builder.Services.AddScoped<IUserTokenService, UserTokenService>();
+
 
 
 

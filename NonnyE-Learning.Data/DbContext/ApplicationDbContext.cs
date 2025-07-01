@@ -25,6 +25,7 @@ namespace NonnyE_Learning.Data.DbContext
         public DbSet<Module> Modules { get; set; }
 		public DbSet<ModuleProgress> ModuleProgress { get; set; }
 		public DbSet<QuizQuestion> QuizQuestions { get; set; }
+		public DbSet<PricingPlan> PricingPlans { get; set; }
 
 	}
 }

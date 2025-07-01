@@ -117,5 +117,27 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 		}
 
+		[HttpGet]
+		public async Task<IActionResult> InitiatePricingPlanPayment(int planId)
+		{
+			var studentId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+			if (studentId == null)
+			{
+				var returnUrl = Url.Action("InitiatePricingPlanPayment", "Payment", new { planId });
+				TempData["error"] = "Please login to continue.";
+				return RedirectToAction("Login", "Account", new { returnUrl });
+			}
+
+			var response = await _transactionServices.CreatePricingPlanTransaction(planId, studentId);
+			if (!response.Success)
+			{
+				TempData["error"] = response.Message;
+				return RedirectToAction("Index", "Home");
+			}
+
+			return Redirect(response.Data);
+		}
+
 	}
 }

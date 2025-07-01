@@ -1,0 +1,124 @@
+﻿@using NonnyE_Learning.Data.Enum
+@model IEnumerable<NonnyE_Learning.Data.Models.Transaction>
+
+@{
+    Layout = "SuperAdmin/_SuperAdminLayout";
+}
+
+<div class="container">
+    <h2 class="text-center">💳 Transaction Overview</h2>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Plan / Course</th>
+                    <th>Amount (₦)</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model)
+                {
+                    <tr>
+                        <td>@t.Reference</td>
+                        <td>@t.StudentName</td>
+                        <td>@t.StudentEmail</td>
+                        
+                        <td>
+                            @if (t.PricingPlan != null)
+                            {
+                                <span class="badge badge-info">@t.PricingPlan.PlanName</span>
+                            }
+                            else if (t.Enrollment?.Course != null)
+                            {
+                                <span class="badge badge-primary">@t.Enrollment.Course.Title</span>
+                            }
+                            else
+                            {
+                                <em>No Plan or Course</em>
+                            }
+                        </td>
+                        <td>@t.Amount.ToString("N2")</td>
+                        <td>
+                            @if (t.TransactionStatus == TransactionStatus.Pending)
+                            {
+                                <span class="badge badge-warning">Pending</span>
+                            }
+                            else if (t.TransactionStatus == TransactionStatus.Completed)
+                            {
+                                <span class="badge badge-success">Completed</span>
+                            }
+                            else if (t.TransactionStatus == TransactionStatus.Failed)
+                            {
+                                <span class="badge badge-danger">Failed</span>
+                            }
+                        </td>
+                        <td>@t.TransactionDate.ToString("dd/MM/yyyy hh:mm tt")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .table-container {
+        overflow-x: auto;
+        margin-top: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        background: #fff;
+        padding: 1rem;
+    }
+
+    table.custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+    }
+
+        table.custom-table th,
+        table.custom-table td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        table.custom-table thead {
+            background-color: #222;
+            color: #fff;
+        }
+
+        table.custom-table tbody tr:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+
+        table.custom-table tbody tr:hover {
+            background-color: #e9e9e9;
+            cursor: pointer;
+        }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        color: #fff;
+        display: inline-block;
+    }
+
+    .badge-warning {
+        background-color: #f0ad4e;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+    }
+</style>

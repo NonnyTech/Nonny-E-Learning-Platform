@@ -28,7 +28,7 @@ namespace NonnyE_Learning.Business.Services
 			await SeedCoursesAsync(context);
 			await SeedModulesAsync(context);
 			await SeedQuizQuestionsAsync(context);
-
+			await SeedPricingPlansAsync(context);
 		}
 
 
@@ -1340,6 +1340,37 @@ namespace NonnyE_Learning.Business.Services
 				}
 			}
 
+			await context.SaveChangesAsync();
+		}
+
+		private static async Task SeedPricingPlansAsync(ApplicationDbContext context)
+		{
+			if (context.PricingPlans.Any())
+				return; // Plans already exist, no need to seed again
+
+			var plans = new List<PricingPlan>
+	{
+		new PricingPlan
+		{
+			PlanName = "Foundation",
+			Price = 60000,
+			Description = "Intro to C# & MVC"
+		},
+		new PricingPlan
+		{
+			PlanName = "Beginner",
+			Price = 80000,
+			Description = "Core C# & Basic MVC"
+		},
+		new PricingPlan
+		{
+			PlanName = "Intermediate",
+			Price = 120000,
+			Description = "Real-World C# & MVC"
+		}
+	};
+
+			await context.PricingPlans.AddRangeAsync(plans);
 			await context.SaveChangesAsync();
 		}
 

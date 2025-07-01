@@ -30,7 +30,7 @@ namespace NonnyE_Learning.Business.Services
 			var secretKey = _flutterwaveConfig.SecretKey;
 			var baseUrl = _flutterwaveConfig.BaseUrl;
 			var url = $"{baseUrl}/v3/payments";
-			var returnUrl = "http://localhost:5161/payment/verifyPayment";
+			var returnUrl = $"{_flutterwaveConfig.RedirectUrlBase}/Payment/VerifyPayment";
 
 			var requestBody = new
 			{
@@ -86,6 +86,47 @@ namespace NonnyE_Learning.Business.Services
 			{
 				return status.GetString();
 			}
+
+			return "failed";
+		}
+
+		public async Task<string> GeneratePricingPlanPaymentLink(Transaction transaction)
+		{
+			var secretKey = _flutterwaveConfig.SecretKey;
+			var url = $"{_flutterwaveConfig.BaseUrl}/v3/payments";
+			var returnUrl = $"{_flutterwaveConfig.RedirectUrlBase}/Payment/VerifyPayment";
+
+			var requestBody = new
+			{
+				tx_ref = transaction.Reference,
+				amount = transaction.Amount,
+				currency = "NGN",
+				redirect_url = returnUrl,
+				payment_options = "card, banktransfer",
+				customer = new
+				{
+					email = transaction.StudentEmail,
+					name = transaction.StudentName
+				},
+				customizations = new
+				{
+					title = "Training Plan Payment",
+					description = $"Payment for {transaction.PricingPlan.PlanName} Plan"
+				}
+			};
+
+			var requestContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+
+			_httpClient.DefaultRequestHeaders.Remove("Authorization");
+			_httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {secretKey}");
+
+			var response = await _httpClient.PostAsync(url, requestContent);
+			if (!response.IsSuccessStatusCode)
+				return null;
+
+			var jsonResponse = await response.Content.ReadFromJsonAsync<JsonElement>();
+			if (jsonResponse.TryGetProperty("data", out var data) && data.TryGetProperty("link", out var link))
+				return link.GetString();
 
 			return "failed";
 		}

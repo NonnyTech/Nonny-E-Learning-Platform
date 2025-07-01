@@ -82,8 +82,20 @@ namespace Nonny_E_Learning_Platform.Controllers
 					{
 						return Redirect(returnUrl);
 					}
+					// Redirect based on user role
+					var userRole = response.Data;
+					switch (userRole)
+					{
+						case "SuperAdmin":
+							return RedirectToAction("Index", "SuperAdmin");
+						case "Instructor":
+							return RedirectToAction("Index", "Home");
+						case "Student":
+							return RedirectToAction("Index", "Home");
+						default:
+							return RedirectToAction("Index", "Home");
+					}
 
-					return RedirectToAction("Index", "Home");
 				}
 				else
 				{

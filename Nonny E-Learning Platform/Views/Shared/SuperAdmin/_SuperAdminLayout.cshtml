@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using NonnyE_Learning.Data.Models
+@inject SignInManager<ApplicationUser> signInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Admin Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<partial name="_HeadPartial" />
+
+<body>
+
+    <partial name="SuperAdmin/_SuperAdminTopBarPartial" />
+
+
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+    <partial name="_Notification" />
+
+    <partial name="_ScriptPartial" />
+
+</body>
+</html>

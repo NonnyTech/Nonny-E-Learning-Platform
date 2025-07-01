@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NonnyE_Learning.Business.AppSetting;
@@ -11,16 +13,19 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace NonnyE_Learning.Business.Services
 {
 	public class UserTokenService : IUserTokenService
 	{
 		private readonly JwtSettings _jwtSettings;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public UserTokenService(IOptions<JwtSettings> jwtOptions)
+		public UserTokenService(IOptions<JwtSettings> jwtOptions, IHttpContextAccessor httpContextAccessor)
 		{
 			_jwtSettings = jwtOptions.Value;
+			_httpContextAccessor = httpContextAccessor;
 		}
 
 		public string GenerateToken(ApplicationUser user, IList<string> roles)
@@ -51,5 +56,8 @@ namespace NonnyE_Learning.Business.Services
 
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
+
+	
+
 	}
 }

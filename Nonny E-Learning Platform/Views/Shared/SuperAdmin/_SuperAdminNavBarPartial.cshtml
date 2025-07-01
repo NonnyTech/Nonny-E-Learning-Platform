@@ -1,0 +1,26 @@
+﻿<header class="header">
+    <div class="container">
+        <div class="hovermenu ttmenu">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="fa fa-bars"></span>
+                    </button>
+                    <div class="logo">
+                        <a class="navbar-brand" href="@Url.Action("Index", "SuperAdmin")"><img src="~/images/NonnyIndexLogo.png" alt="description" width="180" height="30"></a>
+                    </div>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown ttmenu-half">
+                            <a asp-controller="SuperAdmin" asp-action="Index">Home</a>
+                        </li>
+                        <li><a asp-controller="SuperAdmin" asp-action="AllTransactions">Transactions</a></li>
+                        <li><a asp-controller="SuperAdmin" asp-action="Courses">Courses</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

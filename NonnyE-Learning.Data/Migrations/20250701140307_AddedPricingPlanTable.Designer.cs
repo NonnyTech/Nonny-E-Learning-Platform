@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NonnyE_Learning.Data.DbContext;
 
@@ -11,9 +12,11 @@ using NonnyE_Learning.Data.DbContext;
 namespace NonnyE_Learning.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250701140307_AddedPricingPlanTable")]
+    partial class AddedPricingPlanTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -440,7 +443,7 @@ namespace NonnyE_Learning.Data.Migrations
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EnrollmentId")
+                    b.Property<int>("EnrollmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("FlutterReference")
@@ -593,7 +596,9 @@ namespace NonnyE_Learning.Data.Migrations
 
                     b.HasOne("NonnyE_Learning.Data.Models.Enrollment", "Enrollment")
                         .WithMany()
-                        .HasForeignKey("EnrollmentId");
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("NonnyE_Learning.Data.Models.PricingPlan", "PricingPlan")
                         .WithMany()

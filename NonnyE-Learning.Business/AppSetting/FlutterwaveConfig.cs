@@ -10,5 +10,7 @@ namespace NonnyE_Learning.Business.AppSetting
 	{
 		public string SecretKey { get; set; }
 		public string BaseUrl { get; set; }
+		public string RedirectUrlBase { get; set; }
+
 	}
 }

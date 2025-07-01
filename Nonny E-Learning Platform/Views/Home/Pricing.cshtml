@@ -1,0 +1,91 @@
+﻿@model IEnumerable<NonnyE_Learning.Data.Models.PricingPlan>
+
+    <div class="container">
+                <h2 class="text-center">C# & MVC Application Development Training Plans</h2>
+<div class="row">
+    @foreach (var plan in Model)
+    {
+        <div class="col-xs-12 col-sm-4">
+            <div class="pricing-card">
+                <h3 class="plan-title">
+                    @(plan.PlanName == "Foundation" ? "🟢" : plan.PlanName == "Beginner" ? "🔵" : "🟣") @plan.PlanName
+                </h3>
+                <h3 class="plan-price">&#8358;@plan.Price.ToString("N0") <small>/ month</small></h3>
+                <p class="plan-level">@plan.Description</p>
+
+                <ul class="plan-features">
+                    @if (plan.PlanName == "Foundation")
+                    {
+                        <li>✔️ 2 Days/Week (Weekdays)</li>
+                        <li>✔️ Basic Programming Concepts</li>
+                        <li>✔️ Setting up Development Tools</li>
+                        <li>✔️ Introduction to C# Syntax</li>
+                        <li>✔️ Introduction to MVC Structure</li>
+                        <li>✔️ Q&A Sessions</li>
+                    }
+                    else if (plan.PlanName == "Beginner")
+                    {
+                        <li>✔️ 3 Days/Week (Weekdays)</li>
+                        <li>✔️ Full C# Fundamentals</li>
+                        <li>✔️ Building Simple Console Apps</li>
+                        <li>✔️ Basic ASP.NET MVC Applications</li>
+                        <li>✔️ Version Control (Git Intro)</li>
+                        <li>✔️ Mini Project</li>
+                    }
+                    else if (plan.PlanName == "Intermediate")
+                    {
+                        <li>✔️ 5 Days/Week (Weekdays)</li>
+                        <li>✔️ Object-Oriented Programming (OOP)</li>
+                        <li>✔️ Building Full ASP.NET MVC Apps</li>
+                        <li>✔️ Database Integration (EF Core)</li>
+                        <li>✔️ Authentication & Authorization</li>
+                        <li>✔️ Real-World Project</li>
+                        <li>✔️ Code Reviews & Mentorship</li>
+                    }
+                </ul>
+
+                    <a asp-controller="Payment"
+                       asp-action="InitiatePricingPlanPayment"
+                       asp-route-planId="@plan.PricingPlanId"
+                       asp-route-amount="@plan.Price"
+                       class="btn btn-default">
+                        Sign Up
+                    </a>
+                </div>
+        </div>
+    }
+</div>
+
+</div>
+<style>
+    .pricing-card {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .plan-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .plan-price {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+    .plan-level {
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    .plan-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 15px 0;
+        text-align: left;
+    }
+    .plan-features li {
+        margin-bottom: 8px;
+    }
+</style>

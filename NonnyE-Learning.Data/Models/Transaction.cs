@@ -13,7 +13,7 @@ namespace NonnyE_Learning.Data.Models
 	public class Transaction
 	{
 		public int TransactionId { get; set; }
-		public int EnrollmentId { get; set; }
+		public int? EnrollmentId { get; set; }
 
 		public string StudentId { get; set; }
 
@@ -33,6 +33,9 @@ namespace NonnyE_Learning.Data.Models
 
 		//navigation property to the related service
 		public Enrollment Enrollment { get; set; }
+
+		public int? PricingPlanId { get; set; }
+		public PricingPlan PricingPlan { get; set; }
 	}
 }
 

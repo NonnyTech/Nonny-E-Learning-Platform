@@ -181,26 +181,23 @@ namespace NonnyE_Learning.Business.Services
 				};
 			}
 
-			// Get user roles
 			var roles = await _userManager.GetRolesAsync(user);
+			var userRole = roles.FirstOrDefault();
 
-			if (!roles.Contains("SuperAdmin") && !roles.Contains("Student") && !roles.Contains("Instructor"))
+			if (string.IsNullOrEmpty(userRole))
 			{
 				return new BaseResponse<string>
 				{
 					Success = false,
-					Message = "Invalid user or password. No role assigned to the user."
+					Message = "No role assigned to the user."
 				};
 			}
-
-			// ✅ Generate and return JWT token
-			var token = _userTokenService.GenerateToken(user, roles);
 
 			return new BaseResponse<string>
 			{
 				Success = true,
 				Message = "Login successful.",
-				Data = token
+				Data =userRole
 			};
 		}
 		public async Task<BaseResponse<string>> SignOutAsync()

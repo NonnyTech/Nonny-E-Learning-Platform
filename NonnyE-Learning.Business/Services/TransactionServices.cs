@@ -106,5 +106,81 @@ namespace NonnyE_Learning.Business.Services
 			_context.Transactions.Update(transaction);
 			await _context.SaveChangesAsync();
 		}
+
+		public async Task<BaseResponse<string>> CreatePricingPlanTransaction(int planId, string studentId)
+		{
+			var plan = await _context.PricingPlans.FindAsync(planId);
+			if (plan == null)
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "Enrollment not found.",
+					Errors = new List<string> { "Plan not found." }
+
+				};
+			}
+
+			var user = await _userManager.FindByIdAsync(studentId);
+			if (user == null)
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "Enrollment not found.",
+					Errors = new List<string> { "User not found." }
+
+				};
+			}
+
+			var transaction = new Transaction
+			{
+				PricingPlanId = planId,
+				Amount = plan.Price,
+				StudentId = studentId,
+				TransactionStatus = TransactionStatus.Pending,
+				Reference = ReferenceNumberGenerator.GenerateReferenceNumber(10),
+				StudentEmail = user.Email,
+				StudentName = $"{user.FirstName} {user.LastName}"
+			};
+
+			_context.Transactions.Add(transaction);
+			await _context.SaveChangesAsync();
+
+			var paymentUrl = await _flutterwave.GeneratePricingPlanPaymentLink(transaction);
+			return new BaseResponse<string>
+			{
+				Success = true,
+				Message = "Transaction created successfully. Redirect user to Flutterwave.",
+				Data = paymentUrl // Return the payment link
+			};
+		}
+
+		public async Task<BaseResponse<IEnumerable<Transaction>>> GetAllTransactionAsync()
+		{
+			try
+			{
+				var transactions = await _context.Transactions
+					.Include(t => t.PricingPlan)
+					.Include(t => t.Enrollment)
+						.ThenInclude(e => e.Course)
+					.ToListAsync(); 
+				return new BaseResponse<IEnumerable<Transaction>>
+				{
+					Success = true,
+					Data = transactions
+				};
+
+			}
+			catch (Exception ex)
+			{
+
+				return new BaseResponse<IEnumerable<Transaction>>
+				{
+					Success = false,
+					Message = $"An error occurred while retrieving Transaction: {ex.Message}"
+				};
+			}
+		}
 	}
 }

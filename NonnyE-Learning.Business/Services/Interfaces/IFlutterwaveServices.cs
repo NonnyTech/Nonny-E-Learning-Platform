@@ -11,7 +11,7 @@ namespace NonnyE_Learning.Business.Services.Interfaces
 	{
 		Task<string> GenerateFlutterwavePaymentLink(Transaction transaction);
 		Task<string> VerifyFlutterwavePayment(string transactionId);
-
+		Task<string> GeneratePricingPlanPaymentLink(Transaction transaction);
 
 	}
 }

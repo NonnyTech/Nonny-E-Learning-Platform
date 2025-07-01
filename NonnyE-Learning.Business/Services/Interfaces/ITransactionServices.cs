@@ -14,6 +14,12 @@ namespace NonnyE_Learning.Business.Services.Interfaces
 		Task UpdateTransactionStatusAsync(string transactionRef, string flutterTransactionId, string status);
 		Task<Transaction> GetTransactionByReferenceAsync(string transactionRef);
 
+		Task<BaseResponse<string>> CreatePricingPlanTransaction(int planId, string studentId);
+
+		Task<BaseResponse<IEnumerable<Transaction>>> GetAllTransactionAsync();
+
+
+
 
 
 	}

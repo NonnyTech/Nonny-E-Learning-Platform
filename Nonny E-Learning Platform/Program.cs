@@ -12,6 +12,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+
 // Load user secrets only in Development
 if (builder.Environment.IsDevelopment())
 {
@@ -33,10 +36,10 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllersWithViews();
-var connectionString = builder.Configuration.GetConnectionString("MyConnections");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 
-builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseNpgsql(connectionString));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddHostedService<SeedDataService>();
 

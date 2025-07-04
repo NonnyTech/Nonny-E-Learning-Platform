@@ -31,7 +31,7 @@ namespace NonnyE_Learning.Data.Helper
 			var superAdmins = new List<ApplicationUser>
 		{
 			new ApplicationUser
-			{
+			{   Id = Guid.NewGuid().ToString(),
 				UserName = "superadmin@nonnyplus.com",
 				Email = "superadmin@nonnyplus.com",
 				EmailConfirmed = true,

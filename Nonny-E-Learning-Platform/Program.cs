@@ -36,7 +36,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllersWithViews();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DATABASE_URL");
+
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseNpgsql(connectionString));

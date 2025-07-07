@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nonny E-Learning Platform\Nonny E-Learning Platform.csproj" />
+    <ProjectReference Include="..\Nonny-E-Learning-Platform\Nonny-E-Learning-Platform.csproj" />
   </ItemGroup>
 
   <ItemGroup>

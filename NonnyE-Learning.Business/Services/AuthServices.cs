@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using NonnyE_Learning.Business.AppSetting;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Business.ViewModel;
@@ -24,8 +26,9 @@ namespace NonnyE_Learning.Business.Services
 		private readonly IConfiguration _configuration;
 		private readonly IEmailServices _emailServices;
 		private readonly IUserTokenService _userTokenService;
+		private readonly WebSettings _webSettings;
 
-		public AuthServices(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, IEmailServices emailServices, IUserTokenService userTokenService)
+		public AuthServices(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, IEmailServices emailServices, IUserTokenService userTokenService, IOptions<WebSettings> webSettings )
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -33,6 +36,7 @@ namespace NonnyE_Learning.Business.Services
 			_configuration = configuration;
 			_emailServices = emailServices;
 			_userTokenService = userTokenService;
+			_webSettings = webSettings.Value;
 		}
 
         public async Task<BaseResponse<string>> CreateNewStudentAsync(RegisterModel model)
@@ -98,7 +102,8 @@ namespace NonnyE_Learning.Business.Services
 			// Generate email confirmation token
 			var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-			var confirmationLink = $"{_configuration["AppBaseUrl"]}/Account/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+			var confirmationLink = $"{_webSettings.ClientURL}/Account/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+
 
 			//Send the confirmation email
 			string emailBody = EmailTemplate.RegistrationConfirmationTemplate().Replace("{{ConfirmationLink}}", confirmationLink);
@@ -266,7 +271,7 @@ namespace NonnyE_Learning.Business.Services
 			// URL encode the token to ensure special characters are safely included
 			//var decodedToken = Uri.UnescapeDataString(token);
 
-			var resetLink = $"{_configuration["AppBaseUrl"]}/Account/ResetPassword?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+			var resetLink = $"{_webSettings.ClientURL}/Account/ResetPassword?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 			string emailBody = EmailTemplate.ForgetPasswordTemplate().Replace("{{ResetLink}}", resetLink);
 			try
 			{
@@ -416,7 +421,7 @@ namespace NonnyE_Learning.Business.Services
 				}
 
 				var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-				var confirmationLink = $"{_configuration["AppBaseUrl"]}/Account/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+				var confirmationLink = $"{_webSettings.ClientURL}/Account/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 				var emailBody = EmailTemplate.RegistrationConfirmationTemplate().Replace("{{ConfirmationLink}}", confirmationLink);
 				_emailServices.SendConfirmationEmail(user.Email, "Confirm your email", emailBody);
 			}

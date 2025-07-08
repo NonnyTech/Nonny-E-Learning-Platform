@@ -41,6 +41,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseNpgsql(connectionString));
+builder.Services.Configure<WebSettings>(builder.Configuration.GetSection("WebSettings"));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddHostedService<SeedDataService>();
 

@@ -92,11 +92,16 @@ builder.Services.AddScoped<IUserTokenService, UserTokenService>();
 
 var app = builder.Build();
 
-// Apply pending migrations automatically
+// Apply migrations and seed roles/admin
 using (var scope = app.Services.CreateScope())
 {
-	var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+	var services = scope.ServiceProvider;
+	var dbContext = services.GetRequiredService<ApplicationDbContext>();
 	dbContext.Database.Migrate();
+
+	var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+	var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+	await SeedDataHelper.SeedAdminDataAsync(services, userManager, roleManager);
 }
 
 
@@ -117,18 +122,6 @@ app.UseAuthentication();
 
 
 app.UseAuthorization();
-
-
-
-using (var scope = app.Services.CreateScope())
-{
-	var services = scope.ServiceProvider;
-	var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-	var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-	await SeedDataHelper.SeedAdminDataAsync(services, userManager, roleManager);
-
-}
-
 
 app.MapControllerRoute(
     name: "default",

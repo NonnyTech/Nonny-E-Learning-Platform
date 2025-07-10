@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Data.DbContext;
@@ -24,7 +24,7 @@ namespace NonnyE_Learning.Business.Services
 		{
 			try
 			{
-				var pricinPlan = await _context.PricingPlans.ToListAsync();
+				var pricinPlan = await _context.PricingPlans.AsNoTracking().ToListAsync();
 				return new BaseResponse<IEnumerable<PricingPlan>>
 				{
 					Success = true,
@@ -36,7 +36,7 @@ namespace NonnyE_Learning.Business.Services
 				return new BaseResponse<IEnumerable<PricingPlan>>
 				{
 					Success = false,
-					Message = $"An error occurred while retrieving courses: {ex.Message}"
+					Message = "An error occurred while retrieving pricing plans."
 				};
 			}
 		}

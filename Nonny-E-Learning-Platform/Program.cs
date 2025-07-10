@@ -4,54 +4,47 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business;
 using NonnyE_Learning.Business.AppSetting;
-using NonnyE_Learning.Business.Services;
-using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Data.DbContext;
 using NonnyE_Learning.Data.Helper;
 using NonnyE_Learning.Data.Models;
-using System.Text;
+using NonnyE_Learning.Business.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure QuestPDF license
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
-
-// Load user secrets only in Development
+// Load user secrets in Development
 if (builder.Environment.IsDevelopment())
-{
-	builder.Configuration.AddUserSecrets<Program>();
-}
+    builder.Configuration.AddUserSecrets<Program>();
 
-// Add services to the container.
-
+// Configure services
 builder.Services.AddAuthentication(options =>
 {
-	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-	options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 })
-.AddCookie() // ✅ This is important to keep track of the external login state
+.AddCookie()
 .AddGoogle(options =>
 {
-	options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-	options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 });
 
 builder.Services.AddControllersWithViews();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DATABASE_URL");
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                      Environment.GetEnvironmentVariable("DATABASE_URL");
 
-
-builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseNpgsql(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
 builder.Services.Configure<WebSettings>(builder.Configuration.GetSection("WebSettings"));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddHostedService<SeedDataService>();
 
-
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    var allowed = options.User.AllowedUserNameCharacters
-      + "/-@.";
-    options.User.AllowedUserNameCharacters = allowed;
+    options.User.AllowedUserNameCharacters += "/-@.";
     options.Password.RequiredLength = 3;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = false;
@@ -59,16 +52,17 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Password.RequireDigit = false;
     options.Password.RequireNonAlphanumeric = false;
     options.SignIn.RequireConfirmedEmail = true;
-}).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(3);
     options.Cookie.IsEssential = true;
-
 });
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    // Cookie settings
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromDays(150);
     options.LoginPath = "/Account/Login";
@@ -82,24 +76,22 @@ builder.Services.RegisterBusinessServices(builder.Configuration);
 
 var app = builder.Build();
 
-// Apply migrations and seed roles/admin
-using (var scope = app.Services.CreateScope())
+// Modern async migration and seed
+await using (var scope = app.Services.CreateAsyncScope())
 {
-	var services = scope.ServiceProvider;
-	var dbContext = services.GetRequiredService<ApplicationDbContext>();
-	dbContext.Database.Migrate();
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.MigrateAsync();
 
-	var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-	var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-	await SeedDataHelper.SeedAdminDataAsync(services, userManager, roleManager);
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    await SeedDataHelper.SeedAdminDataAsync(services, userManager, roleManager);
 }
 
-
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -109,9 +101,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
-
-
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Data.DbContext;
 using NonnyE_Learning.Data.Models;
@@ -22,9 +22,10 @@ namespace NonnyE_Learning.Business.Services
 		public async Task<List<Module>> GetModulesByCourseIdAsync(int courseId)
 		{
 			 return await _context.Modules
-					   .Where(m => m.CourseId == courseId)
-					   .OrderBy(m => m.Order) // Ensure modules are in order
-					   .ToListAsync();
+            .AsNoTracking()
+            .Where(m => m.CourseId == courseId)
+            .OrderBy(m => m.Order)
+            .ToListAsync();
 			
 		}
 
@@ -57,13 +58,14 @@ namespace NonnyE_Learning.Business.Services
 
 		public async Task<Module> GetModuleById(int moduleId)
 		{
-			return await _context.Modules.FirstOrDefaultAsync(m => m.ModuleId == moduleId);
+			return await _context.Modules.AsNoTracking().FirstOrDefaultAsync(m => m.ModuleId == moduleId);
 		}
 
 		public async Task<ModuleProgress> GetModuleProgressAsync(int moduleId, string studentId)
 		{
 			return await _context.ModuleProgress
-								 .FirstOrDefaultAsync(mp => mp.ModuleId == moduleId && mp.StudentId == studentId);
+            .AsNoTracking()
+            .FirstOrDefaultAsync(mp => mp.ModuleId == moduleId && mp.StudentId == studentId);
 		}
 
 		public async Task<bool> HasUserCompletedAllModules(int courseId, string studentId)
@@ -83,21 +85,23 @@ namespace NonnyE_Learning.Business.Services
 
 		public async Task<ApplicationUser> GetStudentById(string studentId)
 		{
-			return await _context.Users.FirstOrDefaultAsync(a => a.Id == studentId);
+			return await _context.Users.AsNoTracking().FirstOrDefaultAsync(a => a.Id == studentId);
 		}
 
 		public async Task<List<QuizQuestion>> GetQuizQuestionsByModuleIdAsync(int moduleId)
 		{
 			return await _context.QuizQuestions
-									 .Where(q => q.ModuleId == moduleId)
-									 .OrderBy(q => q.Order)
-									 .ToListAsync();
+            .AsNoTracking()
+            .Where(q => q.ModuleId == moduleId)
+            .OrderBy(q => q.Order)
+            .ToListAsync();
 		}
 
 		public async Task<QuizQuestion> GetQuizQuestionByIdAsync(int quizQuestionId)
 		{
 			return await _context.QuizQuestions
-									 .FirstOrDefaultAsync(q => q.QuizQuestionId == quizQuestionId);
+            .AsNoTracking()
+            .FirstOrDefaultAsync(q => q.QuizQuestionId == quizQuestionId);
 		}
 	}
 	}

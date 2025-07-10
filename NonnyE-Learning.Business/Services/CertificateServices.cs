@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business.DTOs;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -33,7 +33,7 @@ namespace NonnyE_Learning.Business.Services
 
 		public async Task<BaseResponse<CertificateFile>> GenerateCertificateAsync(string studentId, int courseId)
 		{
-			var student = await _moduleServices.GetStudentById(studentId);
+			var student = await _moduleServices.GetStudentById(studentId); // Already optimized if GetStudentById uses AsNoTracking
 			if (student == null)
 			{
 				return new BaseResponse<CertificateFile>
@@ -43,7 +43,7 @@ namespace NonnyE_Learning.Business.Services
 				};
 			}
 
-			var courseResponse = await _courseServices.GetCourseById(courseId);
+			var courseResponse = await _courseServices.GetCourseById(courseId); // Already optimized if GetCourseById uses AsNoTracking
 			if (!courseResponse.Success || courseResponse.Data == null)
 			{
 				return new BaseResponse<CertificateFile>

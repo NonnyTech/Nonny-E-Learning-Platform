@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NonnyE_Learning.Business.Services;
 using NonnyE_Learning.Business.Services.Interfaces;
 
 namespace Nonny_E_Learning_Platform.Controllers
@@ -15,23 +14,21 @@ namespace Nonny_E_Learning_Platform.Controllers
 			_transactionServices = transactionServices;
 		}
 
-		public ActionResult Index()
+		public IActionResult Index()
+{
+    return View();
+}
 
-		{ 
-			return View();
-		}
-		[Authorize(Roles = "SuperAdmin")]
-		public async Task<IActionResult> AllTransactions()
-		{
-			var response = await _transactionServices.GetAllTransactionAsync();
-
-			if (!response.Success)
-			{
-				SetErrorMessage(response.Message);
-				return View("Error");
-			}
-
-			return View(response.Data);
-		}
-	}
+[Authorize(Roles = "SuperAdmin")]
+public async Task<IActionResult> AllTransactions()
+{
+    var response = await _transactionServices.GetAllTransactionAsync();
+    if (!response.Success)
+    {
+        SetErrorMessage(response.Message ?? "Failed to retrieve transactions.");
+        return View("Error");
+    }
+    return View(response.Data);
+}
+}
 }

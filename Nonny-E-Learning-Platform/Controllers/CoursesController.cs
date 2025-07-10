@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +12,10 @@ using System.Security.Claims;
 
 namespace Nonny_E_Learning_Platform.Controllers
 {
-    public class CoursesController : Controller
-    {
+    public class CoursesController : BaseController
+{
+   
+    
         private readonly ICourseServices _courseServices;
        
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -36,7 +38,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 			if (!response.Success)
 			{
 				
-				TempData["ErrorMessage"] = response.Message; 
+				SetErrorMessage(response.Message); 
 				return View("Error");  
 			}
 
@@ -67,7 +69,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (enrollmentId == null)
 			{
-				TempData["Error"] = "Failed to create enrollment.";
+				SetErrorMessage("Failed to create enrollment.");
 				return RedirectToAction("Index", "Course");
 			}
 			var viewModel = new CourseDetailsViewModel
@@ -117,7 +119,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (user == null)
 			{
-				TempData["error"] = "User Not Found";
+				SetErrorMessage("User Not Found");
 				return RedirectToAction("Index", "Home");
 
 			}
@@ -128,7 +130,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (courses == null || !courses.Any())
 			{
-				TempData["error"] = $"No courses found for instructor: {instructorFullName}";
+				SetErrorMessage($"No courses found for instructor: {instructorFullName}");
 			}
 
 			return View("ViewMyCourse", courses);

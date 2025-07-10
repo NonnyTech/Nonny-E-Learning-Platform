@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Business.ViewModel;
 using System.Reflection.Metadata;
@@ -10,8 +10,9 @@ using Microsoft.AspNetCore.Authorization;
 namespace Nonny_E_Learning_Platform.Controllers
 {
 	[Authorize]
-	public class LearningController : Controller
-	{
+	public class LearningController : BaseController
+{
+   
 		private readonly ICourseServices _courseServices;
 		private readonly IEnrollmentServices _enrollmentServices;
 		private readonly IModuleServices _moduleServices;
@@ -110,11 +111,11 @@ namespace Nonny_E_Learning_Platform.Controllers
 			{
 				var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 				await _moduleServices.MarkModuleAsCompletedAsync(submission.ModuleId, studentId);
-				TempData["success"] = $"Quiz passed! You scored {score:0}%";
+				SetSuccessMessage($"Quiz passed! You scored {score:0}%");
 			}
 			else
 			{
-				TempData["error"] = $"You scored {score:0}%. Minimum is 80%. Please retake the quiz.";
+				SetErrorMessage($"You scored {score:0}%. Minimum is 80%. Please retake the quiz.");
 				return RedirectToAction("TakeQuiz", new { moduleId = submission.ModuleId });
 			}
 

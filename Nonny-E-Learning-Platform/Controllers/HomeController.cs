@@ -5,8 +5,9 @@ using System.Diagnostics;
 
 namespace Nonny_E_Learning_Platform.Controllers
 {
-    public class HomeController : Controller
-    {
+    public class HomeController : BaseController
+{
+
         private readonly ILogger<HomeController> _logger;
 		private readonly IPricingPlanServices _pricingPlanServices;
 
@@ -38,7 +39,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 			if (!response.Success)
 			{
 
-				TempData["ErrorMessage"] = response.Message;
+				SetErrorMessage(response.Message);
 				return View("Error");
 			}
 

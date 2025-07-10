@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -71,9 +71,10 @@ namespace NonnyE_Learning.Business.Services
 		public async Task<List<Enrollment>> GetEnrollmentsByStudentIdAsync(string studentId)
 		{
 			return await _context.Enrollements
-		   .Where(e => e.StudentId == studentId)
-		   .Include(e => e.Course)
-		   .ToListAsync();
+        .AsNoTracking()
+        .Where(e => e.StudentId == studentId)
+        .Include(e => e.Course)
+        .ToListAsync();
 		}
 	}
 }

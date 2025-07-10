@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -42,7 +42,7 @@ namespace NonnyE_Learning.Business.Services
         public async Task<BaseResponse<string>> CreateNewStudentAsync(RegisterModel model)
         {
 
-            var studentExist = await _userManager.FindByNameAsync(model.Email);
+            var studentExist = await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(u => u.UserName == model.Email);
             if (studentExist != null) 
             {
                 return new BaseResponse<string>

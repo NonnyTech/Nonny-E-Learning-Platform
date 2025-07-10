@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -161,10 +161,11 @@ namespace NonnyE_Learning.Business.Services
 			try
 			{
 				var transactions = await _context.Transactions
-					.Include(t => t.PricingPlan)
-					.Include(t => t.Enrollment)
-						.ThenInclude(e => e.Course)
-					.ToListAsync(); 
+                    .AsNoTracking()
+                    .Include(t => t.PricingPlan)
+                    .Include(t => t.Enrollment)
+                        .ThenInclude(e => e.Course)
+                    .ToListAsync(); 
 				return new BaseResponse<IEnumerable<Transaction>>
 				{
 					Success = true,
@@ -178,7 +179,7 @@ namespace NonnyE_Learning.Business.Services
 				return new BaseResponse<IEnumerable<Transaction>>
 				{
 					Success = false,
-					Message = $"An error occurred while retrieving Transaction: {ex.Message}"
+					Message = "An error occurred while retrieving transactions."
 				};
 			}
 		}

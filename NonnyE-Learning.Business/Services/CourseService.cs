@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Data.DbContext;
@@ -39,7 +39,7 @@ namespace NonnyE_Learning.Business.Services
 				return new BaseResponse<Course>
 				{
 					Success = false,
-					Message = $"An error occurred while adding the course: {ex.Message}"
+					Message = "An error occurred while adding the course."
 				};
 			}
 		}
@@ -70,7 +70,7 @@ namespace NonnyE_Learning.Business.Services
 				return new BaseResponse<bool>
 				{
 					Success = false,
-					Message = $"An error occurred while deleting the course: {ex.Message}"
+					Message = "An error occurred while deleting the course."
 				};
 			}
 		}
@@ -79,7 +79,7 @@ namespace NonnyE_Learning.Business.Services
 		{
 			try
 			{
-				var courses = await _context.Courses.ToListAsync();
+				var courses = await _context.Courses.AsNoTracking().ToListAsync();
 				return new BaseResponse<IEnumerable<Course>>
 				{
 					Success = true,
@@ -91,7 +91,7 @@ namespace NonnyE_Learning.Business.Services
 				return new BaseResponse<IEnumerable<Course>>
 				{
 					Success = false,
-					Message = $"An error occurred while retrieving courses: {ex.Message}"
+					Message = "An error occurred while retrieving courses."
 				};
 			}
 		}
@@ -100,7 +100,7 @@ namespace NonnyE_Learning.Business.Services
 		{
 			try
 			{
-				var getCourse = await _context.Courses.FirstOrDefaultAsync(m => m.CourseId == courseId);
+				var getCourse = await _context.Courses.AsNoTracking().FirstOrDefaultAsync(m => m.CourseId == courseId);
 				if (getCourse == null)
 				{
 					return new BaseResponse<Course>
@@ -120,7 +120,7 @@ namespace NonnyE_Learning.Business.Services
 				return new BaseResponse<Course>
 				{
 					Success = false,
-					Message = $"An error occurred while retrieving the course: {ex.Message}"
+					Message = "An error occurred while retrieving the course."
 				};
 			}
 		}
@@ -142,7 +142,7 @@ namespace NonnyE_Learning.Business.Services
 				return new BaseResponse<Course>
 				{
 					Success = false,
-					Message = $"An error occurred while updating the course: {ex.Message}"
+					Message = "An error occurred while updating the course."
 				};
 			}
 		}
@@ -182,7 +182,7 @@ namespace NonnyE_Learning.Business.Services
 				return new BaseResponse<DateTime?>
 				{
 					Success = false,
-					Message = $"An error occurred while retrieving course completion date: {ex.Message}"
+					Message = "An error occurred while retrieving course completion date."
 				};
 			}
 		}
@@ -192,9 +192,9 @@ namespace NonnyE_Learning.Business.Services
 		
 			string fullName = $"{firstName} {lastName}";
 
-			var allCourses = await _context.Courses
-				.Where(c => c.Instructor != null)
-				.ToListAsync();
+			var allCourses = await _context.Courses.AsNoTracking()
+                .Where(c => c.Instructor != null)
+                .ToListAsync();
 
 			return allCourses
 				.Where(c => c.Instructor.Trim().Equals(fullName, StringComparison.OrdinalIgnoreCase))

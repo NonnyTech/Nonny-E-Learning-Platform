@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NonnyE_Learning.Business.DTOs.Base;
@@ -11,11 +11,10 @@ using System.Security.Claims;
 
 namespace Nonny_E_Learning_Platform.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly IAuthServices _authServices;
 		private readonly UserManager<ApplicationUser> _userManager;
-		
 
 		public AccountController(IAuthServices authServices, UserManager<ApplicationUser> userManager)
         {
@@ -39,11 +38,11 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (!response.Success)
 			{
-				TempData["error"] = response.Message;
+				SetErrorMessage(response.Message);
 				return RedirectToAction(nameof(Login));
 			}
 
-			TempData["success"] = response.Message;
+			SetSuccessMessage(response.Message);
 			return LocalRedirect(response.Data);
 		}
 		[HttpGet]
@@ -75,7 +74,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 				var response = await _authServices.SignInAsync(model);
 				if (response.Success)
 				{
-					TempData["success"] = response.Message;
+					SetSuccessMessage(response.Message);
 
 					// If the returnUrl is local, redirect to it; otherwise, go to Home
 					if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -99,7 +98,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 				}
 				else
 				{
-					TempData["error"] = response.Message;
+					SetErrorMessage(response.Message);
 				}
 			}
 
@@ -122,13 +121,13 @@ namespace Nonny_E_Learning_Platform.Controllers
                 var response = await _authServices.CreateNewStudentAsync(model);
                 if (response.Success)
                 {
-					TempData["success"] = response.Message;
+					SetSuccessMessage(response.Message);
 
                     return RedirectToAction("Login", "Account");
                 }
 				else
 				{
-					TempData["error"] = response.Message;
+					SetErrorMessage(response.Message);
 					return RedirectToAction("Register", "Account");
 
 				}
@@ -141,7 +140,7 @@ namespace Nonny_E_Learning_Platform.Controllers
         public async Task<IActionResult> Logout()
         {
             var response = await _authServices.SignOutAsync();
-            TempData["success"] = response.Message;
+            SetSuccessMessage(response.Message);
             return RedirectToAction("Index", "Home");
         }
 		public IActionResult ForgetPassword()
@@ -162,12 +161,12 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (response.Success)
 			{
-				TempData["success"] = response.Message;
+				SetSuccessMessage(response.Message);
 				return RedirectToAction("Login");
 			}
 			else
 			{
-				TempData["error"] = response.Message;
+				SetErrorMessage(response.Message);
 				return View(model);
 			}
 		}
@@ -182,7 +181,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 					Success = false,
 				    Message = "Invalid password reset request."
 				};
-				TempData["error"] = response.Message; // or return a view with error message
+				SetErrorMessage(response.Message); // or return a view with error message
 				return RedirectToAction("ForgotPassword", "Account");
 
 			}
@@ -208,11 +207,11 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (response.Success)
 			{
-				TempData["success"] = response.Message;
+				SetSuccessMessage(response.Message);
 				return RedirectToAction("Login");
 			}
 
-			TempData["error"] = response.Message;
+			SetErrorMessage(response.Message);
 			return View(model);
 		}
 
@@ -224,11 +223,11 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (response.Success)
 			{
-				TempData["success"] = response.Message;
+				SetSuccessMessage(response.Message);
 			}
 			else
 			{
-				TempData["error"] = response.Message;
+				SetErrorMessage(response.Message);
 			}
 
 			return RedirectToAction("Login");

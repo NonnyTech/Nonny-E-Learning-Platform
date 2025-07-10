@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -7,8 +7,10 @@ using System.Security.Claims;
 namespace Nonny_E_Learning_Platform.Controllers
 {
 	[Authorize]
-	public class CertificateController : Controller
-	{
+	public class CertificateController : BaseController
+{
+   
+	
 		private readonly ICertificateService _certificateService;
 
 		public CertificateController(ICertificateService certificateService)
@@ -23,7 +25,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (!certificate.Success || certificate.Data == null)
 			{
-				TempData["error"] = certificate.Message;
+				SetErrorMessage(certificate.Message);
 				return RedirectToAction("MyCourses"); 
 			}
 			return File(certificate.Data.FileBytes, "application/pdf", certificate.Data.FileName);

@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NonnyE_Learning.Business;
 using NonnyE_Learning.Business.AppSetting;
 using NonnyE_Learning.Business.Services;
 using NonnyE_Learning.Business.Services.Interfaces;
@@ -75,21 +76,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = new PathString("/Home/AccessDenied");
     options.SlidingExpiration = true;
 });
+
 builder.Services.Configure<FlutterwaveConfig>(builder.Configuration.GetSection("FlutterwaveConfig"));
-
-builder.Services.AddTransient<IAuthServices, AuthServices>();
-builder.Services.AddTransient<ICourseServices, CourseService>();
-builder.Services.AddTransient<IEmailServices, EmailServices>();
-builder.Services.AddTransient<ITransactionServices, TransactionServices>();
-builder.Services.AddTransient<IEnrollmentServices, EnrollmentServices>();
-builder.Services.AddTransient<IModuleServices, ModuleServices>();
-builder.Services.AddTransient<ICertificateService, CertificateServices>();
-builder.Services.AddTransient<IPricingPlanServices, PricingPlanServices>();
-builder.Services.AddHttpClient<IFlutterwaveServices, FlutterwaveServices>();
-builder.Services.AddScoped<IUserTokenService, UserTokenService>();
-
-
-
+builder.Services.RegisterBusinessServices(builder.Configuration);
 
 var app = builder.Build();
 

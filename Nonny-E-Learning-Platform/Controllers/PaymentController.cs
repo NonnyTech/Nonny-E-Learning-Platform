@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +13,9 @@ using System.Security.Claims;
 
 namespace Nonny_E_Learning_Platform.Controllers
 {
-	public class PaymentController : Controller
-	{
+	public class PaymentController : BaseController
+{
+   
 		private readonly IFlutterwaveServices _flutterwaveServices;
 		private readonly ICourseServices _courseServices;
 		private readonly ApplicationDbContext _context;
@@ -49,14 +50,14 @@ namespace Nonny_E_Learning_Platform.Controllers
 					amount
 				});
 
-				TempData["error"] = "Please login to use this service.";
+				SetErrorMessage("Please login to use this service.");
 				return RedirectToAction("Login", "Account", new { returnUrl });
 			}
 
 			var courseResponse = await _courseServices.GetCourseById(courseId);
 			if (!courseResponse.Success || courseResponse.Data == null)
 			{
-				TempData["error"] = courseResponse.Message;
+				SetErrorMessage(courseResponse.Message);
 				return RedirectToAction("Index", "Home");
 			}
 
@@ -64,7 +65,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (!transactionResponse.Success)
 			{
-				TempData["error"] = "Failed to initiate payment.";
+				SetErrorMessage("Failed to initiate payment.");
 				return RedirectToAction("Index", "Home");
 
 			}
@@ -79,14 +80,14 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (string.IsNullOrEmpty(flutterTransactionId) || string.IsNullOrEmpty(transactionRef))
 			{
-				TempData["error"] = "Payment verification failed. Invalid transaction details.";
+				SetErrorMessage("Payment verification failed. Invalid transaction details.");
 				return RedirectToAction("Index", "Home");
 			}
 
 			var transaction = await _transactionServices.GetTransactionByReferenceAsync(transactionRef);
 			if (transaction == null)
 			{
-				TempData["error"] = "Payment verification failed. Transaction not found.";
+				SetErrorMessage("Payment verification failed. Transaction not found.");
 				return RedirectToAction("Index", "Home");
 			}
 			var paymentStatus = await _flutterwaveServices.VerifyFlutterwavePayment(flutterTransactionId);
@@ -95,7 +96,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			if (paymentStatus.ToLower() != "successful")
 			{
-				TempData["error"] = "Payment failed.";
+				SetErrorMessage("Payment failed.");
 				return RedirectToAction("Index", "Home");
 			}
 			var user = await _userManager.FindByIdAsync(transaction.StudentId);
@@ -112,7 +113,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 
 			_emailServices.SendPaymentConfirmationEmail(emailModel);
 
-			TempData["success"] = "Payment was successful, and a confirmation email has been sent.";
+			SetErrorMessage("Payment was successful, and a confirmation email has been sent.");
 			return RedirectToAction("Index", "Home");
 
 		}
@@ -125,14 +126,14 @@ namespace Nonny_E_Learning_Platform.Controllers
 			if (studentId == null)
 			{
 				var returnUrl = Url.Action("InitiatePricingPlanPayment", "Payment", new { planId });
-				TempData["error"] = "Please login to continue.";
+				SetErrorMessage("Please login to continue.");
 				return RedirectToAction("Login", "Account", new { returnUrl });
 			}
 
 			var response = await _transactionServices.CreatePricingPlanTransaction(planId, studentId);
 			if (!response.Success)
 			{
-				TempData["error"] = response.Message;
+				SetErrorMessage(response.Message);
 				return RedirectToAction("Index", "Home");
 			}
 

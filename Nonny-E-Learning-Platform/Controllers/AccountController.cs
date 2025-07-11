@@ -70,42 +70,52 @@ namespace Nonny_E_Learning_Platform.Controllers
             return Json($"Email: {email} is already in use");
         }
 
-        /// <summary>
-        /// Handles login POST.
-        /// </summary>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model, string returnUrl = null)
-        {
-            if (!ModelState.IsValid)
-            {
-                ViewData["ReturnUrl"] = returnUrl;
-                return View(model);
-            }
-            var response = await _authServices.SignInAsync(model);
-            if (response.Success)
-            {
-                SetSuccessMessage(response.Message);
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    return Redirect(returnUrl);
-                // Redirect based on user role
-                return response.Data switch
-                {
-                    "SuperAdmin" => RedirectToAction("Index", "SuperAdmin"),
-                    "Instructor" => RedirectToAction("Index", "Home"),
-                    "Student" => RedirectToAction("Index", "Home"),
-                    _ => RedirectToAction("Index", "Home")
-                };
-            }
-            SetErrorMessage(response.Message);
-            ViewData["ReturnUrl"] = returnUrl;
-            return View(model);
-        }
+		/// <summary>
+		/// Handles login POST.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Login(LoginModel model, string returnUrl = null)
+		{
+			if (!ModelState.IsValid)
+			{
+				ViewData["ReturnUrl"] = returnUrl;
+				return View(model);
+			}
 
-        /// <summary>
-        /// Shows the registration page.
-        /// </summary>
-        [HttpGet]
+			var response = await _authServices.SignInAsync(model);
+
+			if (response.Success)
+			{
+				// ? If OTP is needed
+				if (response.Message.Contains("OTP"))
+				{
+					SetSuccessMessage(response.Message);
+					return RedirectToAction("VerifyOtp", new { userId = response.Data });
+				}
+
+				SetSuccessMessage(response.Message);
+
+				string userRole = response.Data;
+
+				return userRole switch
+				{
+					"SuperAdmin" => RedirectToAction("Index", "SuperAdmin"),
+					"Instructor" => RedirectToAction("Index", "Home"),
+					"Student" => RedirectToAction("Index", "Home"),
+					_ => RedirectToAction("Index", "Home")
+				};
+			}
+
+			SetErrorMessage(response.Message);
+			ViewData["ReturnUrl"] = returnUrl;
+			return View(model);
+		}
+
+		/// <summary>
+		/// Shows the registration page.
+		/// </summary>
+		[HttpGet]
         public IActionResult Register()
         {
             return View();
@@ -220,5 +230,43 @@ namespace Nonny_E_Learning_Platform.Controllers
                 SetErrorMessage(response.Message);
             return RedirectToAction("Login");
         }
-    }
+
+		[HttpGet]
+		public IActionResult VerifyOtp(string userId)
+		{
+			ViewBag.UserId = userId;
+			return View();
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> VerifyOtp(OtpVerificationModel model)
+		{
+			if (!ModelState.IsValid)
+			{
+				SetErrorMessage("Please enter a valid OTP.");
+				ViewBag.UserId = model.UserId;
+				return View();
+			}
+
+			var response = await _authServices.VerifyOtpAsync(model);
+			if (response.Success)
+			{
+				SetSuccessMessage(response.Message);
+				return response.Data switch
+				{
+					"SuperAdmin" => RedirectToAction("Index", "SuperAdmin"),
+					"Instructor" => RedirectToAction("Index", "Home"),
+					"Student" => RedirectToAction("Index", "Home"),
+					_ => RedirectToAction("Index", "Home")
+				};
+			}
+			SetErrorMessage(response.Message);
+			ViewBag.UserId = model.UserId;
+			return View();
+		}
+
+
+
+	}
 }

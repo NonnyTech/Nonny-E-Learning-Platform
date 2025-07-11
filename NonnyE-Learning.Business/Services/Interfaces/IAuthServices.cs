@@ -22,6 +22,8 @@ namespace NonnyE_Learning.Business.Services.Interfaces
 		Task<BaseResponse<string>> ExternalLoginCallbackAsync(string returnUrl, string remoteError);
 
         AuthenticationProperties ConfigureExternalAuthentication(string provider, string redirectUrl);
+		Task<BaseResponse<string>> VerifyOtpAsync(OtpVerificationModel model);
+
 
 
 

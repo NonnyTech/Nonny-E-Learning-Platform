@@ -160,5 +160,39 @@ namespace NonnyE_Learning.Data.Helper
     </body>
     </html>";
 		}
+
+		public static string OtpVerificationTemplate()
+		{
+			return @"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>Your OTP Code</title>
+</head>
+<body style=""font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0;"">
+    <div style=""max-width: 600px; margin: auto; background-color: #fff; padding: 20px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"">
+        <div style=""text-align: center;"">
+            <img src=""https://i.imghippo.com/files/Ft3436Izg.png"" alt=""NonnyPlus Logo"" style=""width: 150px; height: auto;"" />
+        </div>
+        <h2 style=""color: #333;"">Your One-Time Password (OTP)</h2>
+        <p style=""font-size: 16px; color: #555;"">
+            Please use the OTP below to complete your login. This code will expire in 5 minutes.
+        </p>
+        <div style=""text-align: center; margin: 30px 0;"">
+            <span style=""font-size: 32px; letter-spacing: 5px; font-weight: bold; color: #4CAF50;"">{{OtpCode}}</span>
+        </div>
+        <p style=""font-size: 14px; color: #999;"">
+            If you did not request this OTP, please ignore this email.
+        </p>
+        <p style=""font-size: 14px; color: #333;"">
+            Thanks,<br>The NonnyPLUS Team
+        </p>
+    </div>
+</body>
+</html>
+";
+		}
 	}
 }

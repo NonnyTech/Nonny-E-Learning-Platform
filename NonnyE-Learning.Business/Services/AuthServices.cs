@@ -183,7 +183,7 @@ namespace NonnyE_Learning.Business.Services
 			return new BaseResponse<string>
 			{
 				Success = true,
-				Message = "OTP has been sent to your email.Please usethe Otp to Login",
+				Message = "OTP has been sent to your email. Please use the Otp to Login",
 				Data = user.Id
 			};
 		}

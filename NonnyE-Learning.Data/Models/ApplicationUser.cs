@@ -11,6 +11,8 @@ namespace NonnyE_Learning.Data.Models
     {
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
+		public bool IsOtpVerified { get; set; } = false;
+
 
 	}
 }

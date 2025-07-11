@@ -15,6 +15,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using OtpNet;
+using static System.Net.WebRequestMethods;
+
 
 namespace NonnyE_Learning.Business.Services
 {
@@ -135,76 +138,56 @@ namespace NonnyE_Learning.Business.Services
 
 			return $"NonnyPlus{nextId.ToString("D3")}"; // e.g., NonnyPlus001
 		}
+		private string GenerateOtp(string email)
+		{
+			var secret = Encoding.ASCII.GetBytes(email); // You can improve this with salt/key
+			var totp = new Totp(secret, step: 300); // OTP valid for 5 minutes
+			return totp.ComputeTotp();
+		}
+
+		private bool VerifyOtp(string email, string userOtp)
+		{
+			var secret = Encoding.ASCII.GetBytes(email);
+			var totp = new Totp(secret, step: 300);
+			return totp.VerifyTotp(userOtp, out long _, VerificationWindow.RfcSpecifiedNetworkDelay);
+		}
 		public async Task<BaseResponse<string>> SignInAsync(LoginModel model)
 		{
 			var user = await _userManager.FindByEmailAsync(model.Email);
-
 			if (user == null)
-			{
-				return new BaseResponse<string>
-				{
-					Success = false,
-					Message = "User not found."
-				};
-			}
+				return new BaseResponse<string> { Success = false, Message = "User not found." };
 
 			if (!await _userManager.IsEmailConfirmedAsync(user))
-			{
-				return new BaseResponse<string>
-				{
-					Success = false,
-					Message = "Email not confirmed. Please check your email for the confirmation link."
-				};
-			}
+				return new BaseResponse<string> { Success = false, Message = "Email not confirmed." };
 
 			if (!await _userManager.CheckPasswordAsync(user, model.Password))
+				return new BaseResponse<string> { Success = false, Message = "Invalid credentials." };
+
+			if (user.IsOtpVerified)
 			{
+				await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
+				var roles = await _userManager.GetRolesAsync(user);
+				var userRole = roles.FirstOrDefault();
+
 				return new BaseResponse<string>
 				{
-					Success = false,
-					Message = "Invalid email or password. Please try again."
+					Success = true,
+					Message = "Login successful.",
+					Data = userRole
 				};
 			}
-
-			var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
-
-			if (result.IsLockedOut)
-			{
-				return new BaseResponse<string>
-				{
-					Success = false,
-					Message = "Your account is locked due to multiple failed login attempts. Please try again later or contact support."
-				};
-			}
-
-			if (!result.Succeeded)
-			{
-				return new BaseResponse<string>
-				{
-					Success = false,
-					Message = "Invalid email or password. Please try again."
-				};
-			}
-
-			var roles = await _userManager.GetRolesAsync(user);
-			var userRole = roles.FirstOrDefault();
-
-			if (string.IsNullOrEmpty(userRole))
-			{
-				return new BaseResponse<string>
-				{
-					Success = false,
-					Message = "No role assigned to the user."
-				};
-			}
+			var otp = GenerateOtp(user.Email);
+			string body = EmailTemplate.OtpVerificationTemplate().Replace("{{OtpCode}}", otp);
+			_emailServices.SendConfirmationEmail(user.Email, "Your OTP Code", body);
 
 			return new BaseResponse<string>
 			{
 				Success = true,
-				Message = "Login successful.",
-				Data =userRole
+				Message = "OTP has been sent to your email.Please usethe Otp to Login",
+				Data = user.Id
 			};
 		}
+
 		public async Task<BaseResponse<string>> SignOutAsync()
         {
             await _signInManager.SignOutAsync();
@@ -458,6 +441,39 @@ namespace NonnyE_Learning.Business.Services
 		public AuthenticationProperties ConfigureExternalAuthentication(string provider, string redirectUrl)
 		{
 			return _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+		}
+
+		public async Task<BaseResponse<string>> VerifyOtpAsync(OtpVerificationModel model)
+		{
+			var user = await _userManager.FindByIdAsync(model.UserId);
+			if (user == null)
+				return new BaseResponse<string> { Success = false, Message = "User not found." };
+
+			if (!VerifyOtp(user.Email, model.OtpCode))
+				return new BaseResponse<string> { Success = false, Message = "Invalid or expired OTP." };
+
+			user.IsOtpVerified = true;
+			await _userManager.UpdateAsync(user);
+			// ✅ Now sign them in
+			await _signInManager.SignInAsync(user, false);
+
+			var roles = await _userManager.GetRolesAsync(user);
+			var userRole = roles.FirstOrDefault();
+			if (string.IsNullOrEmpty(userRole))
+			{
+				return new BaseResponse<string>
+				{
+					Success = false,
+					Message = "No role assigned to the user."
+				};
+			}
+
+			return new BaseResponse<string>
+			{
+				Success = true,
+				Message = "OTP verification successful. Login complete.",
+				Data = userRole
+			};
 		}
 	}
 }

@@ -77,7 +77,7 @@ namespace NonnyE_Learning.Business.Services
 			{
 				smtpClient.Credentials = new System.Net.NetworkCredential(_smtpSettings.User, _smtpSettings.Pass);
 				smtpClient.UseDefaultCredentials = false;
-				smtpClient.EnableSsl = false;
+				smtpClient.EnableSsl = true;
 
 
 				var mailMessage = new MailMessage

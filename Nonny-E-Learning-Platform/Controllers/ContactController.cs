@@ -32,7 +32,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 			{
 
 				_emailServices.SendContactUsEmail(model);
-				SetErrorMessage("Your message has been sent successfully!");
+				SetSuccessMessage("Your message has been sent successfully!");
 			}
 			catch
 			{

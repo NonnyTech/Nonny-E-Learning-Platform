@@ -23,7 +23,7 @@ namespace NonnyE_Learning.Data.Helper
         <div style=""max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 32px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"">
             
             <div style=""text-align: center; border-bottom: 1px solid #dddddd; padding-bottom: 20px; margin-bottom: 20px;"">
-                <img src=""https://i.imghippo.com/files/Ft3436Izg.png"" style=""width: 200px; height: 125px;"" alt=""NonnyPlus Logo"">
+<img src=""https://i.imgur.com/jcGFNJK.png"" style=""width: 120px; height: auto;"" alt=""NonnyPlus Logo"">
                 <h1 style=""text-align: center; font-size: 24px; color: #333; margin: 0; padding: 20px 0;"">New Contact Form Submission</h1>
             </div>
             
@@ -71,7 +71,7 @@ namespace NonnyE_Learning.Data.Helper
             <div style=""max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 32px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"">
                 
                 <div style=""text-align: center; border-bottom: 1px solid #dddddd; padding-bottom: 20px; margin-bottom: 20px;"">
-                    <img src=""https://i.imghippo.com/files/Ft3436Izg.png"" style=""width: 200px; height: 125px;"" alt=""NonnyPlus Logo"">
+<img src=""https://i.imgur.com/jcGFNJK.png"" style=""width: 120px; height: auto;"" alt=""NonnyPlus Logo"">
                     <h1 style=""text-align: center; font-size: 24px; color: #333; margin: 0; padding: 20px 0;"">Confirm Your Email</h1>
                 </div>
                 
@@ -111,7 +111,7 @@ namespace NonnyE_Learning.Data.Helper
     <body style=""font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0;"">
         <div style=""max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"">
             <div style=""text-align: center; margin-bottom: 20px;"">
-                <img src=""https://i.imghippo.com/files/Ft3436Izg.png"" alt=""NonnyPlus Logo"" style=""width: 150px; height: auto;"" />
+<img src=""https://i.imgur.com/jcGFNJK.png"" style=""width: 120px; height: auto;"" alt=""NonnyPlus Logo"">
             </div>
             <h2 style=""text-align: center; color: #333;"">Reset Your Password</h2>
             <p style=""font-size: 16px; color: #555;"">
@@ -146,7 +146,7 @@ namespace NonnyE_Learning.Data.Helper
     <body style='font-family: Arial, sans-serif; background-color: #f3f4f6; padding: 20px;'>
         <div style='max-width: 600px; margin: auto; background: #fff; padding: 20px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);'>
            <div style=""text-align: center; margin-bottom: 20px;"">
-                <img src=""https://i.imghippo.com/files/Ft3436Izg.png"" alt=""NonnyPlus Logo"" style=""width: 150px; height: auto;"" />
+<img src=""https://i.imgur.com/jcGFNJK.png"" style=""width: 120px; height: auto;"" alt=""NonnyPlus Logo"">
             </div>
             <h2 style='color: #333;'>Payment Confirmation</h2>
             <p>Dear {{CustomerName}},</p>
@@ -174,7 +174,7 @@ namespace NonnyE_Learning.Data.Helper
 <body style=""font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0;"">
     <div style=""max-width: 600px; margin: auto; background-color: #fff; padding: 20px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"">
         <div style=""text-align: center;"">
-            <img src=""https://i.imghippo.com/files/Ft3436Izg.png"" alt=""NonnyPlus Logo"" style=""width: 150px; height: auto;"" />
+<img src=""https://i.imgur.com/jcGFNJK.png"" style=""width: 120px; height: auto;"" alt=""NonnyPlus Logo"">
         </div>
         <h2 style=""color: #333;"">Your One-Time Password (OTP)</h2>
         <p style=""font-size: 16px; color: #555;"">

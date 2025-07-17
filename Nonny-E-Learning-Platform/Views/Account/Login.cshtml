@@ -4,6 +4,9 @@
     Layout = "Account/_AccountLayout";
     var returnUrl = ViewData["ReturnUrl"] as string;
     var showEmailConfirmationModal = TempData["ShowEmailConfirmationModal"] as bool? ?? false;
+    var showForgotPasswordModal = TempData["ShowForgotPasswordModal"] as bool? ?? false;
+
+
 }
 
 <partial name="_Notification" />
@@ -88,12 +91,38 @@
                     </div>
                 </div>
 
+                <div class="modal fade" id="forgetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgetPasswordModalLabel">
+                    <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="forgetPasswordModalLabel">Password reset Sent</h5>
+                            </div>
+                            <div class="modal-body">
+                                <p>Please check your email to rest your password.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 @* ✅ Show Modal Script *@
                 @if (showEmailConfirmationModal)
                 {
                     <script>
                         $(document).ready(function () {
                             $('#emailConfirmationModal').modal('show');
+                        });
+                    </script>
+                }
+
+                @if (showForgotPasswordModal)
+                {
+                    <script>
+                        $(document).ready(function () {
+                            $('#forgetPasswordModal').modal('show');
                         });
                     </script>
                 }

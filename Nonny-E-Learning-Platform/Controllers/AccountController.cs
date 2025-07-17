@@ -171,7 +171,7 @@ namespace Nonny_E_Learning_Platform.Controllers
             var response = await _authServices.ForgetPasswordAsync(model.Email);
             if (response.Success)
             {
-                SetSuccessMessage(response.Message);
+				TempData["ShowForgotPasswordModal"] = true;
                 return RedirectToAction("Login");
             }
             SetErrorMessage(response.Message);

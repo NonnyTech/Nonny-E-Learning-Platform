@@ -3,7 +3,7 @@
 @{
     Layout = "Account/_AccountLayout";
     var returnUrl = ViewData["ReturnUrl"] as string;
-
+    var showEmailConfirmationModal = TempData["ShowEmailConfirmationModal"] as bool? ?? false;
 }
 
 <partial name="_Notification" />
@@ -22,7 +22,7 @@
                                 <a href="#" class="active" id="login-form-link">Login</a>
                             </div>
                         </div>
-                        <hr>
+                        <hr />
                     </div>
                     <div class="panel-body">
                         <div class="row">
@@ -42,7 +42,7 @@
                                     <div class="form-group text-center">
                                         <input asp-for="RememberMe" />
                                         <label asp-for="RememberMe">
-                                        @Html.DisplayNameFor(m => m.RememberMe)
+                                            @Html.DisplayNameFor(m => m.RememberMe)
                                         </label>
                                     </div>
                                     <div class="form-group">
@@ -50,24 +50,54 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="text-center">
-                                            <a asp-action="ForgetPassword" asp-controller="Account" tabindex="5" class="forgot-password">Forgot Password?</a>
-                                            <a asp-action="Register" asp-controller="Account" tabindex="5" class="create-account">Create account</a>
+                                            <a asp-action="ForgetPassword" asp-controller="Account" class="forgot-password">Forgot Password?</a>
+                                            <a asp-action="Register" asp-controller="Account" class="create-account">Create account</a>
                                         </div>
                                     </div>
                                 </form>
+
                                 <div class="form-group text-center">
                                     <form asp-controller="Account" asp-action="ExternalLogin" method="post">
                                         <input type="hidden" name="provider" value="Google" />
                                         <input type="hidden" name="returnUrl" value="/" />
                                         <button type="submit" class="btn btn-danger">
-                                          <i class="fa fa-google"></i> Login with Google
+                                            <i class="fa fa-google"></i> Login with Google
                                         </button>
                                     </form>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- ✅ Modal for Email Confirmation -->
+                <div class="modal fade" id="emailConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="emailConfirmationModalLabel">
+                    <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="emailConfirmationModalLabel">Email Confirmation Sent</h5>
+                            </div>
+                            <div class="modal-body">
+                                <p>Please check your email to confirm your account before logging in.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* ✅ Show Modal Script *@
+                @if (showEmailConfirmationModal)
+                {
+                    <script>
+                        $(document).ready(function () {
+                            $('#emailConfirmationModal').modal('show');
+                        });
+                    </script>
+                }
+
             </div>
         </div>
     </div>

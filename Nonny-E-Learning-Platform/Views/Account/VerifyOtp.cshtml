@@ -2,6 +2,8 @@
 
 @{
     Layout = "Account/_AccountLayout";
+    var showVerifyEmailModal = TempData["ShowVerifyEmailModal"] as bool? ?? false;
+
 }
 
 <partial name="_Notification" />
@@ -54,3 +56,28 @@
         </div>
     </div>
 </div>
+<!-- ✅ Modal for OTP Verification Notice -->
+<div class="modal fade" id="verifyOtpModal" tabindex="-1" role="dialog" aria-labelledby="verifyOtpModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="verifyOtpModalLabel">OTP Sent</h5>
+            </div>
+            <div class="modal-body">
+                <p>An OTP has been sent to your email. Please check it and enter it below to continue.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (showVerifyEmailModal)
+{
+    <script>
+        $(document).ready(function () {
+            $('#verifyOtpModal').modal('show');
+        });
+    </script>
+}

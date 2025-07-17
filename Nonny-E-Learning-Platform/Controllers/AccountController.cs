@@ -90,7 +90,7 @@ namespace Nonny_E_Learning_Platform.Controllers
 				// ? If OTP is needed
 				if (response.Message.Contains("OTP"))
 				{
-					SetSuccessMessage(response.Message);
+					TempData["ShowVerifyEmailModal"] = true;
 					return RedirectToAction("VerifyOtp", new { userId = response.Data });
 				}
 
@@ -133,8 +133,8 @@ namespace Nonny_E_Learning_Platform.Controllers
             var response = await _authServices.CreateNewStudentAsync(model);
             if (response.Success)
             {
-                SetSuccessMessage(response.Message);
-                return RedirectToAction("Login", "Account");
+				TempData["ShowEmailConfirmationModal"] = true;
+				return RedirectToAction("Login", "Account");
             }
             SetErrorMessage(response.Message);
             return RedirectToAction("Register", "Account");

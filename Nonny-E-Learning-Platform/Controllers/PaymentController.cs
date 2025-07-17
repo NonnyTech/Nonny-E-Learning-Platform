@@ -95,8 +95,8 @@ namespace Nonny_E_Learning_Platform.Controllers
     // If SendPaymentConfirmationEmail is async, await it. Otherwise, leave as is.
         _emailServices.SendPaymentConfirmationEmail(emailModel);
         SetSuccessMessage("Payment was successful, and a confirmation email has been sent.");
-        return RedirectToAction("Index", "Home");
-}
+			return RedirectToAction("MyCourses", "Courses");
+		}
 
 
 		[HttpGet]

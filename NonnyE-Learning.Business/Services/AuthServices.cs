@@ -342,17 +342,12 @@ namespace NonnyE_Learning.Business.Services
 			var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
 			if (result.Succeeded)
 			{
-				var existingUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-				if (existingUser != null && !await _userManager.IsEmailConfirmedAsync(existingUser))
+				return new BaseResponse<string>
 				{
-					await _signInManager.SignOutAsync();
-					return new BaseResponse<string>
-					{
-						Success = false,
-						Message = "You cannot log in at the moment—please confirm your email address."
-					};
-				}
-				return new BaseResponse<string> { Success = true, Message = "Login successful.", Data = returnUrl };
+					Success = true,
+					Message = "Login successful.",
+					Data = returnUrl
+				};
 			}
 
 			var email = info.Principal.FindFirstValue(ClaimTypes.Email);
@@ -369,14 +364,6 @@ namespace NonnyE_Learning.Business.Services
 			}
 
 			var user = await _userManager.FindByEmailAsync(email);
-			if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
-			{
-				return new BaseResponse<string>
-				{
-					Success = false,
-					Message = "You cannot log in at the moment—please confirm your email address."
-				};
-			}
 
 			if (user == null)
 			{
@@ -389,7 +376,7 @@ namespace NonnyE_Learning.Business.Services
 					Email = email,
 					FirstName = firstName,
 					LastName = lastName,
-					EmailConfirmed = false
+					EmailConfirmed = true // 👈 mark as confirmed automatically
 				};
 
 				var createResult = await _userManager.CreateAsync(user);
@@ -403,10 +390,7 @@ namespace NonnyE_Learning.Business.Services
 					};
 				}
 
-				var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-				var confirmationLink = $"{_webSettings.ClientURL}/Account/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
-				var emailBody = EmailTemplate.RegistrationConfirmationTemplate().Replace("{{ConfirmationLink}}", confirmationLink);
-				_emailServices.SendConfirmationEmail(user.Email, "Confirm your email", emailBody);
+				// No need to send confirmation email
 			}
 
 			var addLoginResult = await _userManager.AddLoginAsync(user, info);
@@ -420,15 +404,6 @@ namespace NonnyE_Learning.Business.Services
 				};
 			}
 
-			if (!await _userManager.IsEmailConfirmedAsync(user))
-			{
-				return new BaseResponse<string>
-				{
-					Success = false,
-					Message = "You cannot log in at the moment—please confirm your email address."
-				};
-			}
-
 			await _signInManager.SignInAsync(user, false);
 			return new BaseResponse<string>
 			{
@@ -437,7 +412,6 @@ namespace NonnyE_Learning.Business.Services
 				Data = returnUrl
 			};
 		}
-
 		public AuthenticationProperties ConfigureExternalAuthentication(string provider, string redirectUrl)
 		{
 			return _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);

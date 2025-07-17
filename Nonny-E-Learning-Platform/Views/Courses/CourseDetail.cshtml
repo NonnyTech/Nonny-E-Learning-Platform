@@ -6,6 +6,8 @@
     var returnUrl = Context.Request.GetEncodedPathAndQuery();
 
 }
+<partial name="_Notification" />
+
 
 
 <section class="white section">
@@ -25,7 +27,7 @@
                     <hr>
                     <p class="course-time">Lectures: <strong>@Model.Lectures</strong></p>
                     <hr>
-                    <p class="course-time">Price: <strong>@Model.Price</strong></p>
+                    <p class="course-time">Price: <strong>@($"₦{Model.Price:N0}")</strong></p>
                     <hr>
                     @if (!User.Identity.IsAuthenticated)
                     {

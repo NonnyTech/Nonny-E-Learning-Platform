@@ -35,9 +35,10 @@
                     <div class="shop-list-desc">
                         <h4><a asp-action="CourseDetail" asp-controller="Courses" asp-route-courseId="@item.CourseId">@item.Title</a></h4>
                         <div class="shopmeta">
-                            <span class="pull-left"><strong>Course Price:</strong> @item.Price </span>
-                        </div>
-                        <hr class="invis clearfix">
+                            <span class="pull-left">
+                                <strong>Course Price:</strong> @($"₦{item.Price:N0}")
+                            </span>
+                        </div>                        <hr class="invis clearfix">
                         <p>
                             @item.Description
                         </p>

@@ -41,6 +41,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.Configure<WebSettings>(builder.Configuration.GetSection("WebSettings"));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddHostedService<SeedDataService>();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {

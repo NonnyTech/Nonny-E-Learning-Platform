@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Business.Services.Interfaces;
 using NonnyE_Learning.Business.ViewModel;
@@ -13,11 +14,13 @@ namespace Nonny_E_Learning_Platform.Controllers
     {
         private readonly IAuthServices _authServices;
 		private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IMemoryCache _cache;
 
-		public AccountController(IAuthServices authServices, UserManager<ApplicationUser> userManager)
+		public AccountController(IAuthServices authServices, UserManager<ApplicationUser> userManager, IMemoryCache cache)
         {
             _authServices = authServices;
             _userManager = userManager;
+            _cache = cache;
         }
 
         /// <summary>
@@ -59,15 +62,22 @@ namespace Nonny_E_Learning_Platform.Controllers
         }
 
         /// <summary>
-        /// Checks if an email is already in use.
+        /// Checks if an email is already in use (with caching optimization).
         /// </summary>
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> IsEmailInUse(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return Json(true);
-            return Json($"Email: {email} is already in use");
+            if (string.IsNullOrEmpty(email))
+                return Json(false);
+
+            var cacheKey = $"EmailInUse_{email}";
+            if (!_cache.TryGetValue(cacheKey, out bool isInUse))
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                isInUse = user != null;
+                _cache.Set(cacheKey, isInUse, TimeSpan.FromMinutes(1));
+            }
+            return isInUse ? Json($"Email: {email} is already in use") : Json("Email is available");
         }
 
 		/// <summary>

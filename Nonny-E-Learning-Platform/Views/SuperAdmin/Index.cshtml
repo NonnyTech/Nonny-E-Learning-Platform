@@ -4,7 +4,7 @@
 }
 <div class="container my-5">
     <div class="text-center mb-5">
-        <h2 class="font-weight-bold display-4">👨‍💼 Super Admin Dashboard</h2>
+        <h2 class="font-weight-bold display-4">Super Admin Dashboard</h2>
         <p class="text-muted lead">Effortlessly manage students, transactions, plans, and content.</p>
     </div>
 
@@ -12,86 +12,134 @@
 
         <!-- Students Card -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-lg h-100 text-center p-3">
-                <div class="mb-4">
-                    <i class="fa fa-users fa-4x text-primary mb-3"></i>
+            <div class="shop-item-list entry h-100">
+                <div>
+                    <img src="upload/students.png" alt="Students">
+                    <div class="magnifier"></div>
                 </div>
-                <h5 class="card-title font-weight-bold">Students</h5>
-                <p class="text-muted">View and manage all registered students.</p>
-                <a href="#" class="btn btn-outline-primary w-100">View Students</a>
+                <div class="shop-item-title clearfix">
+                    <h4>Students</h4>
+                    <p>View and manage all registered students.</p>
+                    <div class="shopmeta">
+                        <span class="pull-left">Users</span>
+                        <div class="rating pull-right"><i class="fa fa-users" style="color: #6c757d;"></i></div>
+                    </div>
+                </div>
+                <div class="shop-button clearfix">
+                    <a href="#" class="btn btn-primary btn-block">View Students</a>
+                </div>
             </div>
         </div>
 
         <!-- Transactions Card -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-lg h-100 text-center p-3">
-                <div class="mb-4">
-                    <i class="fa fa-credit-card fa-4x text-success mb-3"></i>
+            <div class="shop-item-list entry h-100">
+                <div>
+                    <img src="upload/transactions.png" alt="Transactions">
+                    <div class="magnifier"></div>
                 </div>
-                <h5 class="card-title font-weight-bold">Transactions</h5>
-                <p class="text-muted">View all payment transactions.</p>
-                <a href="@Url.Action("AllTransactions", "SuperAdmin")" class="btn btn-outline-success w-100">View Transactions</a>
+                <div class="shop-item-title clearfix">
+                    <h4>Transactions</h4>
+                    <p>View all payment transactions.</p>
+                    <div class="shopmeta">
+                        <span class="pull-left">Payments</span>
+                        <div class="rating pull-right"><i class="fa fa-credit-card" style="color: #6c757d;"></i></div>
+                    </div>
+                </div>
+                <div class="shop-button clearfix">
+                    <a asp-action="AllTransactions" asp-controller="SuperAdmin" class="btn btn-primary btn-block">View Transactions</a>
+                </div>
             </div>
         </div>
 
         <!-- Manage Plans Card -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-lg h-100 text-center p-3">
-                <div class="mb-4">
-                    <i class="fa fa-cogs fa-4x text-warning mb-3"></i>
+            <div class="shop-item-list entry h-100">
+                <div>
+                    <img src="upload/plans.png" alt="Plans">
+                    <div class="magnifier"></div>
                 </div>
-                <h5 class="card-title font-weight-bold">Manage Plans</h5>
-                <p class="text-muted">View or edit pricing plans and courses.</p>
-                <a href="#" class="btn btn-outline-warning w-100">Manage Plans</a>
+                <div class="shop-item-title clearfix">
+                    <h4><a href="#">Manage Plans</a></h4>
+                    <p>View or edit pricing plans and courses.</p>
+                    <div class="shopmeta">
+                        <span class="pull-left">Plans</span>
+                        <div class="rating pull-right"><i class="fa fa-cogs" style="color: #6c757d;"></i></div>
+                    </div>
+                </div>
+                <div class="shop-button clearfix">
+                    <a href="#" class="btn btn-primary btn-block">Manage Plans</a>
+                </div>
             </div>
         </div>
-
     </div>
 
     <div class="row">
 
-        <!-- View Courses Card -->
+        <!-- Courses Card -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-lg h-100 text-center p-3">
-                <div class="mb-4">
-                    <i class="fa fa-book fa-4x text-info mb-3"></i>
+            <div class="shop-item-list entry h-100">
+                <div>
+                    <img src="upload/courses.png" alt="Courses">
+                    <div class="magnifier"></div>
                 </div>
-                <h5 class="card-title font-weight-bold">Courses</h5>
-                <p class="text-muted">Manage or view all available courses.</p>
-                <a href="#" class="btn btn-outline-info w-100">View Courses</a>
+                <div class="shop-item-title clearfix">
+                    <h4><a href="#">Courses</a></h4>
+                    <p>Manage or view all available courses.</p>
+                    <div class="shopmeta">
+                        <span class="pull-left">Content</span>
+                        <div class="rating pull-right"><i class="fa fa-book" style="color: #6c757d;"></i></div>
+                    </div>
+                </div>
+                <div class="shop-button clearfix">
+                    <a href="#" class="btn btn-primary btn-block">View Courses</a>
+                </div>
             </div>
         </div>
 
-        <!-- View Quiz Card -->
+        <!-- Quizzes Card -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-lg h-100 text-center p-3">
-                <div class="mb-4">
-                    <i class="fa fa-question-circle fa-4x text-danger mb-3"></i>
+            <div class="shop-item-list entry h-100">
+                <div>
+                    <img src="upload/quizzes.png" alt="Quizzes">
+                    <div class="magnifier"></div>
                 </div>
-                <h5 class="card-title font-weight-bold">Quizzes</h5>
-                <p class="text-muted">View or manage all quizzes.</p>
-                <a href="#" class="btn btn-outline-danger w-100">View Quizzes</a>
+                <div class="shop-item-title clearfix">
+                    <h4><a href="#">Quizzes</a></h4>
+                    <p>View or manage all quizzes.</p>
+                    <div class="shopmeta">
+                        <span class="pull-left">Assessments</span>
+                        <div class="rating pull-right"><i class="fa fa-question-circle" style="color: #6c757d;"></i></div>
+                    </div>
+                </div>
+                <div class="shop-button clearfix">
+                    <a href="#" class="btn btn-primary btn-block">View Quizzes</a>
+                </div>
             </div>
         </div>
 
-        <!-- View Instructors Card -->
+        <!-- Instructors Card -->
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card border-0 shadow-lg h-100 text-center p-3">
-                <div class="mb-4">
-                    <i class="fa fa-chalkboard-teacher fa-4x text-secondary mb-3"></i>
+            <div class="shop-item-list entry h-100">
+                <div>
+                    <img src="upload/instructors.png" alt="Instructors">
+                    <div class="magnifier"></div>
                 </div>
-                <h5 class="card-title font-weight-bold">Instructors</h5>
-                <p class="text-muted">Manage or view all instructors.</p>
-                <a href="#" class="btn btn-outline-secondary w-100">View Instructors</a>
+                <div class="shop-item-title clearfix">
+                    <h4><a href="#">Instructors</a></h4>
+                    <p>Manage or view all instructors.</p>
+                    <div class="shopmeta">
+                        <span class="pull-left">Staff</span>
+                        <div class="rating pull-right">
+                            <i class="fa fa-chalkboard-teacher" style="color: #6c757d;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="shop-button clearfix">
+                    <a href="#" class="btn btn-primary btn-block">View Instructors</a>
+                </div>
             </div>
         </div>
 
     </div>
 </div>
-
-<style>
-    .hover-shadow:hover {
-        transform: translateY(-5px);
-        transition: all 0.3s ease;
-    }
-</style>

@@ -36,7 +36,9 @@ namespace NonnyE_Learning.Data.Helper
 				Email = "superadmin@nonnyplus.com",
 				EmailConfirmed = true,
 				FirstName = "Super",
-				LastName = "Admin"
+				LastName = "Admin",
+				IsOtpVerified = true
+				
 			}
 		};
 
@@ -65,7 +67,9 @@ namespace NonnyE_Learning.Data.Helper
 				Email = "Instructor1@nonnyplus.com",
 				EmailConfirmed = true,
 				FirstName = "Stanley",
-				LastName = "Nonso"
+				LastName = "Nonso",
+			    IsOtpVerified = true
+
 			},
 			new ApplicationUser
 			{
@@ -74,7 +78,9 @@ namespace NonnyE_Learning.Data.Helper
 				Email = "Instructor2@nonnyplus.com",
 				EmailConfirmed = true,
 				FirstName = "Anthony",
-				LastName = "Ikemefuna"
+				LastName = "Ikemefuna",
+				IsOtpVerified = true
+
 			},
 			new ApplicationUser
 			{
@@ -83,7 +89,9 @@ namespace NonnyE_Learning.Data.Helper
 				Email = "Instructor3@nonnyplus.com",
 				EmailConfirmed = true,
 				FirstName = "Rita",
-				LastName = "Ikemefuna"
+				LastName = "Ikemefuna",
+			     IsOtpVerified = true
+
 			}
 		};
 

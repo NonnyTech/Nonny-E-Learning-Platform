@@ -183,5 +183,42 @@ namespace NonnyE_Learning.Business.Services
 				};
 			}
 		}
-	}
+    public async Task<BaseResponse<PagedResult<Transaction>>> GetTransactionsPagedAsync(int pageNumber, int pageSize)
+    {
+        try
+        {
+            var query = _context.Transactions
+                .AsNoTracking()
+                .Include(t => t.PricingPlan)
+                .Include(t => t.Enrollment)
+                    .ThenInclude(e => e.Course)
+                .OrderByDescending(t => t.TransactionId);
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new BaseResponse<PagedResult<Transaction>>
+            {
+                Success = true,
+                Data = new PagedResult<Transaction>
+                {
+                    Items = items,
+                    TotalCount = totalCount
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            return new BaseResponse<PagedResult<Transaction>>
+            {
+                Success = false,
+                Message = "An error occurred while retrieving transactions.",
+                Errors = new List<string> { ex.Message }
+            };
+        }
+    }
+}
 }

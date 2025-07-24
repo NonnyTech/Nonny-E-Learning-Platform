@@ -1,11 +1,17 @@
-﻿@using NonnyE_Learning.Data.Enum
-@model IEnumerable<NonnyE_Learning.Data.Models.Transaction>
+@using NonnyE_Learning.Data.Enum
+@using NonnyE_Learning.Business.DTOs.Base
+@model PagedResult<NonnyE_Learning.Data.Models.Transaction>
 
 @{
     Layout = "SuperAdmin/_SuperAdminLayout";
 }
 
 <div class="container">
+    <div class="mb-3">
+        <a href="~/SuperAdmin" class="btn btn-secondary">
+            ← Back to Dashboard
+        </a>
+    </div>
     <h2 class="text-center">💳 Transaction Overview</h2>
 
     <div class="table-container">
@@ -22,7 +28,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var t in Model)
+                @foreach (var t in Model.Items)
                 {
                     <tr>
                         <td>@t.Reference</td>
@@ -64,6 +70,29 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination Controls -->
+    @if (Model.TotalCount > 0)
+    {
+        var totalPages = (int)Math.Ceiling((double)Model.TotalCount / 20); // Default page size 20; update if dynamic
+        var currentPage = Context.Request.Query["pageNumber"].Count > 0 ? int.Parse(Context.Request.Query["pageNumber"]) : 1;
+        <nav aria-label="Transaction pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="?pageNumber=@(currentPage - 1)&pageSize=20">Previous</a>
+                </li>
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="?pageNumber=@i&pageSize=20">@i</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" href="?pageNumber=@(currentPage + 1)&pageSize=20">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
 </div>
 
 <style>

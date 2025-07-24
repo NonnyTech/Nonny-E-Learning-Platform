@@ -1,4 +1,4 @@
-﻿using NonnyE_Learning.Business.DTOs.Base;
+using NonnyE_Learning.Business.DTOs.Base;
 using NonnyE_Learning.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -18,9 +18,6 @@ namespace NonnyE_Learning.Business.Services.Interfaces
 
 		Task<BaseResponse<IEnumerable<Transaction>>> GetAllTransactionAsync();
 
-
-
-
-
+        Task<BaseResponse<PagedResult<Transaction>>> GetTransactionsPagedAsync(int pageNumber, int pageSize);
 	}
 }

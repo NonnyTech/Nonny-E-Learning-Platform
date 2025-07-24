@@ -20,9 +20,9 @@ namespace Nonny_E_Learning_Platform.Controllers
 }
 
 [Authorize(Roles = "SuperAdmin")]
-public async Task<IActionResult> AllTransactions()
+public async Task<IActionResult> AllTransactions(int pageNumber = 1, int pageSize = 20)
 {
-    var response = await _transactionServices.GetAllTransactionAsync();
+    var response = await _transactionServices.GetTransactionsPagedAsync(pageNumber, pageSize);
     if (!response.Success)
     {
         SetErrorMessage(response.Message ?? "Failed to retrieve transactions.");
